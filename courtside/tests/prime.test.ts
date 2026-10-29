@@ -1,0 +1,12 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import {primeCards,matchPrimeDetail,primeStart} from '../lib/prime.ts';
+const wrap=(v:any)=>`<script type="application/json">${JSON.stringify(v)}</script>`;
+const card={entityType:'EVENT',widgetType:'TitleCard',title:'Blue Jackets vs. Hurricanes',synopsis:'Columbus Blue Jackets and Carolina Hurricanes',liveInfo:{status:'UPCOMING'},entitlementCues:{focusMessage:{message:'Free trial of Hurricanes Hockey Network'}},link:{url:'/detail/0JBVB7184081W2T923BPI7ETB7?ref_=tracking'}};
+const game:any={league:'nhl',date:'2026-10-29T23:00Z',teams:[{name:'Columbus Blue Jackets'},{name:'Carolina Hurricanes'}]};
+const detail={entityType:'EVENT',liveState:{id:'upcoming'},synopsis:card.synopsis,title:card.title,compactGti:'0JBVB7184081W2T923BPI7ETB7',pageDateTimeBadge:'Oct 29, 2026 6:30 PM EDT'};
+const detailDoc=(overrides:any={})=>wrap({init:{preparations:{body:{atf:{state:{detail:{headerDetail:{event:{...detail,...overrides}}}}}}}}});
+test('HHN catalog extracts provider links without tracking or credentials',()=>{const links=primeCards(wrap({cards:[card,card]}));assert.equal(links.length,1);assert.equal(links[0].url,'https://www.primevideo.com/detail/0JBVB7184081W2T923BPI7ETB7');});
+test('non-HHN, replay, foreign host and malformed catalogs fail closed',()=>{for(const change of [{entitlementCues:{}},{liveInfo:{status:'REPLAY'}},{link:{url:'https://evil.example/detail/0JBVB7184081W2T923BPI7ETB7'}}])assert.equal(primeCards(wrap({...card,...change})).length,0);assert.equal(primeCards('<html>sign in</html>').length,0);});
+test('matching permits pregame but rejects wrong day, opponent, content ID and replay',()=>{const candidate=primeCards(wrap(card))[0];assert.equal(matchPrimeDetail(detailDoc(),candidate,game)?.service,'prime-hhn');for(const change of [{pageDateTimeBadge:'Oct 30, 2026 6:30 PM EDT'},{synopsis:'Winnipeg Jets and Carolina Hurricanes'},{compactGti:'OTHER'},{liveState:{id:'ended'}}])assert.equal(matchPrimeDetail(detailDoc(change),candidate,game),null);});
+test('Eastern date parsing handles daylight saving and rejects missing date',()=>{assert.equal(primeStart('Oct 29, 2026 6:30 PM EDT'),Date.parse('2026-10-29T22:30Z'));assert.equal(primeStart('Nov 1, 2026 12:30 PM EST'),Date.parse('2026-11-01T17:30Z'));assert.ok(Number.isNaN(primeStart('Tomorrow 6:30 PM')));});

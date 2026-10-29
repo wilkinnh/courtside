@@ -1,0 +1,14 @@
+services:
+  courtside:
+    build: .
+    restart: unless-stopped
+    init: true
+    ports:
+      - "${BIND_ADDRESS:-127.0.0.1}:${PORT:-8788}:8788"
+    environment:
+      COURTSIDE_API_KEY: ${COURTSIDE_API_KEY:-}
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true

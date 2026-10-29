@@ -1,0 +1,54 @@
+# Merge into configuration.yaml (or a Home Assistant package).
+# Run the Docker website/API on your LAN with BIND_ADDRESS=0.0.0.0.
+# Replace 192.168.1.50, sensor.my_team and media_player.living_room_apple_tv.
+# If COURTSIDE_API_KEY is empty, remove the headers/authorization lines below.
+# If a key is set, secrets.yaml: courtside_authorization: "Bearer YOUR_AT_LEAST_24_CHARACTER_KEY"
+rest_command:
+  courtside_resolve:
+    url: "http://192.168.1.50:8788/api/v1/resolve"
+    method: POST
+    headers:
+      authorization: !secret courtside_authorization
+    content_type: "application/json"
+    timeout: 45
+    payload: >-
+      {{ {
+        'attributes': tracker_attributes,
+        'services': ['prime', 'prime-hhn', 'xfinity', 'disney', 'paramount', 'peacock', 'max', 'espn', 'ota'],
+        'overrides': []
+      } | to_json }}
+
+script:
+  courtside_watch_team:
+    alias: "Courtside — watch my team on Apple TV"
+    mode: single
+    sequence:
+      - action: rest_command.courtside_resolve
+        data:
+          tracker_attributes: "{{ states.sensor.my_team.attributes | dict }}"
+        response_variable: resolved
+      - condition: template
+        value_template: >-
+          {{ resolved.status == 200 and resolved.content.apple_tv_url is not none
+             and resolved.content.link_kind == 'event'
+             and resolved.content.event.state == 'in' }}
+      # Apple TV integration uses Companion app launching for media type url.
+      # Test a real provider link on your device first. Not every tvOS app
+      # handles its web URLs. Do not use media_content_type: video (AirPlay).
+      - action: media_player.play_media
+        target:
+          entity_id: media_player.living_room_apple_tv
+        data:
+          media_content_type: url
+          media_content_id: "{{ resolved.content.apple_tv_url }}"
+
+# Optional automation. Enable after manually testing the script and provider.
+# automation:
+#   - alias: "Courtside — game starts"
+#     triggers:
+#       - trigger: state
+#         entity_id: sensor.my_team
+#         to: "IN"
+#     actions:
+#       - action: script.courtside_watch_team
+#     mode: single
