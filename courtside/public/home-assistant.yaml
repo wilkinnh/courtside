@@ -1,6 +1,7 @@
 # Merge into configuration.yaml (or a Home Assistant package).
 # Run the Docker website/API on your LAN with BIND_ADDRESS=0.0.0.0.
-# Replace 192.168.1.50, sensor.my_team and media_player.living_room_apple_tv.
+# Replace 192.168.1.50 with your Courtside server IP.
+# Pass team and media_player when calling the script.
 # If COURTSIDE_API_KEY is empty, remove the headers/authorization lines below.
 # If a key is set, secrets.yaml: courtside_authorization: "Bearer YOUR_AT_LEAST_24_CHARACTER_KEY"
 rest_command:
@@ -22,10 +23,29 @@ script:
   courtside_watch_team:
     alias: "Courtside — watch my team on Apple TV"
     mode: single
+    fields:
+      team:
+        name: Team
+        selector:
+          entity:
+            filter:
+              - integration: teamtracker
+                domain: sensor
+        required: true
+      media_player:
+        name: Media player
+        description: Apple TV or a player supporting provider deep links with media type url.
+        selector:
+          entity:
+            filter:
+              - domain: media_player
+        required: true
     sequence:
+      - condition: template
+        value_template: "{{ team is defined and media_player is defined and has_value(team) }}"
       - action: rest_command.courtside_resolve
-        data:
-          tracker_attributes: "{{ states.sensor.my_team.attributes | dict }}"
+        data: >-
+          {{ {"tracker_attributes": dict(states[team].attributes)} }}
         response_variable: resolved
       - condition: template
         value_template: >-
@@ -37,7 +57,7 @@ script:
       # handles its web URLs. Do not use media_content_type: video (AirPlay).
       - action: media_player.play_media
         target:
-          entity_id: media_player.living_room_apple_tv
+          entity_id: "{{ media_player }}"
         data:
           media_content_type: url
           media_content_id: "{{ resolved.content.apple_tv_url }}"
@@ -51,4 +71,7 @@ script:
 #         to: "IN"
 #     actions:
 #       - action: script.courtside_watch_team
+#         data:
+#           team: "{{ trigger.entity_id }}"
+#           media_player: media_player.living_room_apple_tv
 #     mode: single

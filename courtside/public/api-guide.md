@@ -92,3 +92,17 @@ Paramount+ Carabao Cup and Serie A matches can resolve to CBS Sports event pages
 Prime discovery now includes explicit base-Prime event cards as well as HHN, keeping their subscriptions separate. Third-party channel trials are not treated as included Prime access.
 
 Options can include `sourceUrl` and `playbackTarget`. All automatic options remain `deviceVerified: false`. `apple_tv_url` may differ from `watch_url` when another selected provider has an app-link candidate. A successful HTTP response is not proof of playback, entitlement, or tvOS compatibility.
+
+
+## Choose a team and playback device per call
+
+The supplied `script.courtside_watch_team` requires two fields: `team` (a Team Tracker sensor entity) and `media_player` (the destination media player entity). The script reads attributes from the selected sensor and sends the resolved Apple TV URL to the selected player. The player must support app deep links with media type `url`; choosing a generic media player does not add that capability. The existing live-game requirement remains.
+
+```yaml
+action: script.courtside_watch_team
+data:
+  team: sensor.carolina_hurricanes
+  media_player: media_player.living_room_apple_tv
+```
+
+Replace these example entity IDs with your own. Reload scripts after updating the script in Home Assistant.
