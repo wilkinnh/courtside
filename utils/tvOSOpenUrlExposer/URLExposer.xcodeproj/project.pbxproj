@@ -1,0 +1,25 @@
+// !$*UTF8*$!
+{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+00000000000000000000000A = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+000000000000000000000014 = { isa = PBXBuildFile; fileRef = 00000000000000000000000A; };
+00000000000000000000000B = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureStore.swift; sourceTree = "<group>"; };
+000000000000000000000015 = { isa = PBXBuildFile; fileRef = 00000000000000000000000B; };
+00000000000000000000000C = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
+000000000000000000000016 = { isa = PBXBuildFile; fileRef = 00000000000000000000000C; };
+00000000000000000000000D = { isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+00000000000000000000000E = { isa = PBXFileReference; explicitFileType = wrapper.application; path = URLExposer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+000000000000000000000002 = { isa = PBXGroup; children = (000000000000000000000003, 000000000000000000000004,); sourceTree = "<group>"; };
+000000000000000000000003 = { isa = PBXGroup; children = (00000000000000000000000A, 00000000000000000000000B, 00000000000000000000000C, 00000000000000000000000D,); path = URLExposer; sourceTree = "<group>"; };
+000000000000000000000004 = { isa = PBXGroup; children = (00000000000000000000000E,); name = Products; sourceTree = "<group>"; };
+00000000000000000000001E = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (000000000000000000000014, 000000000000000000000015, 000000000000000000000016,); runOnlyForDeploymentPostprocessing = 0; };
+00000000000000000000001F = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+000000000000000000000020 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+000000000000000000000005 = { isa = PBXNativeTarget; buildConfigurationList = 000000000000000000000029; buildPhases = (00000000000000000000001E, 00000000000000000000001F, 000000000000000000000020,); buildRules = (); dependencies = (); name = URLExposer; productName = URLExposer; productReference = 00000000000000000000000E; productType = "com.apple.product-type.application"; };
+000000000000000000000001 = { isa = PBXProject; attributes = { LastUpgradeCheck = 1600; TargetAttributes = { 000000000000000000000005 = { CreatedOnToolsVersion = 16.0; }; }; }; buildConfigurationList = 000000000000000000000028; compatibilityVersion = "Xcode 14.0"; developmentRegion = en; hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = 000000000000000000000002; productRefGroup = 000000000000000000000004; projectDirPath = ""; projectRoot = ""; targets = (000000000000000000000005,); };
+000000000000000000000028 = { isa = XCConfigurationList; buildConfigurations = (000000000000000000000032, 000000000000000000000033,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+000000000000000000000029 = { isa = XCConfigurationList; buildConfigurations = (000000000000000000000034, 000000000000000000000035,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+000000000000000000000032 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { CLANG_ENABLE_MODULES = YES; SDKROOT = appletvos; TVOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.0; DEBUG_INFORMATION_FORMAT = dwarf; }; };
+000000000000000000000033 = { isa = XCBuildConfiguration; name = Release; buildSettings = { CLANG_ENABLE_MODULES = YES; SDKROOT = appletvos; TVOS_DEPLOYMENT_TARGET = 16.0; SWIFT_VERSION = 5.0; DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym"; }; };
+000000000000000000000034 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = URLExposer/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = dev.courtside.URLExposer; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "appletvos appletvsimulator"; TARGETED_DEVICE_FAMILY = 3; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG; }; };
+000000000000000000000035 = { isa = XCBuildConfiguration; name = Release; buildSettings = { CODE_SIGN_STYLE = Automatic; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = URLExposer/Info.plist; PRODUCT_BUNDLE_IDENTIFIER = dev.courtside.URLExposer; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "appletvos appletvsimulator"; TARGETED_DEVICE_FAMILY = 3; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_OPTIMIZATION_LEVEL = "-O"; }; };
+}; rootObject = 000000000000000000000001; }
