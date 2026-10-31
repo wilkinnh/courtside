@@ -34,13 +34,17 @@ export function primeStart(value:string):number{
  const month=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(m[1]);if(month<0)return NaN;
  return Date.UTC(+m[3],month,+m[2],(+m[4]%12)+(m[6]==='PM'?12:0)+(m[7]==='EDT'?4:5),+(m[5]||0));
 }
+export function primeAppUrl(gti:unknown):string|undefined{
+ if(typeof gti!=='string'||!/^amzn1\.dv\.gti\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(gti))return undefined;
+ return `https://watch.amazon.com/detail?gti=${gti}&territory=US&ref_=share_ios_event&r=web`;
+}
 export function matchPrimeDetail(text:string,card:Card,g:Game):WatchLink|null{
  for(const doc of documents(text)){
   const details=doc?.init?.preparations?.body?.atf?.state?.detail?.headerDetail||{};
   for(const d of Object.values(details) as any[]){
    const delta=Date.parse(g.date)-primeStart(d.pageDateTimeBadge);
    if(d.entityType!=='EVENT'||!['live','upcoming'].includes(d.liveState?.id)||!(card.service==='prime'?titleMatches(d.title||'',g):sameTeams(d.synopsis||'',g))||card.url.split('/').pop()!==d.compactGti||!Number.isFinite(delta)||delta< -15*60000||delta>90*60000)continue;
-   return {service:card.service||'prime-hhn',label:d.title,url:card.url,kind:'event',source:'Prime Video catalog · both teams and scheduled time matched',sourceUrl:SPORTS_URL,playbackTarget:'provider_app_candidate',verifiedAt:new Date().toISOString(),access:'subscription_required',feed:card.service==='prime'?'Prime Video':'Hurricanes Hockey Network on Prime Video',language:'en',deviceVerified:false};
+   return {service:card.service||'prime-hhn',label:d.title,url:card.url,appUrl:primeAppUrl(d.gti),kind:'event',source:'Prime Video catalog · both teams and scheduled time matched',sourceUrl:SPORTS_URL,playbackTarget:'provider_app_candidate',verifiedAt:new Date().toISOString(),access:'subscription_required',feed:card.service==='prime'?'Prime Video':'Hurricanes Hockey Network on Prime Video',language:'en',deviceVerified:false};
   }
  }return null;
 }

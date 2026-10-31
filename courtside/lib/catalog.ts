@@ -6,18 +6,25 @@ export const sportCategories = [
  {name:"Men's college basketball",icon:'◉',leagues:['ncaam']},
  {name:"Men's baseball",icon:'◇',leagues:['mlb']},
  {name:"Men's hockey",icon:'✳',leagues:['nhl']},
- {name:"Men's soccer",icon:'⚽',leagues:['epl','mls','ucl','seriea','eflcup','eflchampionship']},
- {name:"Women's soccer",icon:'⚽',leagues:['uwcl']},
+ {name:'Premier League',icon:'⚽',leagues:['epl']},
+ {name:'MLS',icon:'⚽',leagues:['mls']},
+ {name:'Champions League',icon:'⚽',leagues:['ucl']},
+ {name:'Serie A',icon:'⚽',leagues:['seriea']},
+ {name:'Carabao Cup',icon:'⚽',leagues:['eflcup']},
+ {name:'EFL Championship',icon:'⚽',leagues:['eflchampionship']},
+ {name:"Women's Champions League",icon:'⚽',leagues:['uwcl']},
 ];
 export function sportCategory(league:string){return sportCategories.find(c=>c.leagues.includes(league))?.name||'';}
 export function migrateHiddenSports(hidden:unknown):string[]{
  const values=Array.isArray(hidden)?hidden:['Basketball'];
+ const soccer=["Premier League","MLS","Champions League","Serie A","Carabao Cup","EFL Championship"];
  const previous:Record<string,string[]>={
+  "Men's soccer":soccer,"Women's soccer":["Women's Champions League"],
   Football:["Men's pro football","Men's college football"],
   Basketball:["Men's pro basketball","Men's college basketball"],
   'Pro football':["Men's pro football"], 'College football':["Men's college football"],
   'Pro basketball':["Men's pro basketball"], 'College basketball':["Men's college basketball"],
-  Baseball:["Men's baseball"],Hockey:["Men's hockey"],Soccer:["Men's soccer","Women's soccer"],
+  Baseball:["Men's baseball"],Hockey:["Men's hockey"],Soccer:[...soccer,"Women's Champions League"],
  };
  return [...new Set(values.flatMap(s=>typeof s==='string'?(previous[s]||[s]):[]).filter(s=>sportCategories.some(c=>c.name===s)))];
 }

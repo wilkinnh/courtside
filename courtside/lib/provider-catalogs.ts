@@ -68,14 +68,54 @@ export function paramountLinks(text:string,g:Game,sourceUrl:string):WatchLink[]{
   if(!links.some(l=>l.url===url))links.push({service:'paramount',label:`${v.title} · CBS Sports (Paramount+ login)`,url,kind:'event',source:'CBS Sports catalog · teams, competition and kickoff matched; browser link',sourceUrl,verifiedAt:new Date().toISOString(),access:'subscription_required',language:'en',deviceVerified:false,playbackTarget:'browser_only'});
  }return unambiguous(links);
 }
+// Read the public page's JSON assignment without executing provider JavaScript.
+function usaPageData(text:string){
+ const marker=/window\.page_data\s*=\s*/.exec(text);if(!marker)throw new Error('USA catalog data missing');
+ const start=marker.index+marker[0].length;let depth=0,quoted=false,escaped=false;
+ for(let i=start;i<text.length;i++){
+  const c=text[i];if(quoted){if(escaped)escaped=false;else if(c==='\\')escaped=true;else if(c==='"')quoted=false;continue;}
+  if(c==='"')quoted=true;else if(c==='{')depth++;else if(c==='}'&&--depth===0)return JSON.parse(text.slice(start,i+1));
+ }throw new Error('Invalid USA catalog data');
+}
+const usaLeagues:Record<string,string>={epl:'Premier League',wnba:'WNBA',ncaaf:'NCAA'};
+export function usaLinks(text:string,g:Game,sourceUrl:string):WatchLink[]{
+ const data=usaPageData(text);const links:WatchLink[]=[];
+ if(!usaLeagues[g.league]||g.state==='post')return links;
+ walk(data,v=>{
+  if(v.gist?.contentType!=='GAME'||v.network!=='usanetwork'||v.league?.title!==usaLeagues[g.league]||!['live','default','upcoming'].includes(v.currentState)||!v.livestreams?.length)return;
+  if(g.teams.length!==2||!g.teams.every(t=>{
+   const side=t.homeAway==='home'?v.homeTeam:v.awayTeam;
+   return side&&(teamMatches(side.title||'',t.name,g.league)||(g.league==='ncaaf'&&t.shortName&&clean(side.title||'')===clean(t.shortName)));
+  }))return;
+  // USA may begin coverage before kickoff. Require the same scheduled window.
+  if(!v.schedules?.some((s:any)=>{const delta=Date.parse(g.date)-s.startDate*1000;return Number.isFinite(delta)&&delta>=-15*60000&&delta<=90*60000&&s.endDate*1000>Date.parse(g.date);}))return;
+  const path=v.gist.permalink;if(!/^\/game\/[a-z0-9-]+$/.test(path||''))return;
+  const url='https://www.usanetwork.com'+path;
+  if(!links.some(l=>l.url===url))links.push({service:'xfinity',feed:'USA Network',label:v.gist.title,url,kind:'event',source:'USA Network catalog · teams, league and broadcast time matched',sourceUrl,verifiedAt:new Date().toISOString(),access:'subscription_required',language:'en',deviceVerified:false,playbackTarget:'browser_only'});
+ });return unambiguous(links);
+}
 export async function enrichProviderCatalogs(games:Game[]){
- const active=games.filter(g=>g.state!=='post');const statuses:Record<string,boolean|null>={peacock:null,paramount:null};
+ const active=games.filter(g=>g.state!=='post');const statuses:Record<string,boolean|null>={peacock:null,paramount:null,usa:null};
  const jobs:{service:string;url:string;games:Game[];parse:typeof peacockLinks}[]=[];
  for(const [league,pages] of Object.entries(peacockPages))if(active.some(g=>g.league===league))for(const page of pages)jobs.push({service:'peacock',url:`https://www.peacocktv.com/sports/${page}`,games:active.filter(g=>g.league===league),parse:peacockLinks});
  for(const [league,cfg] of Object.entries(cbsPages))if(active.some(g=>g.league===league))jobs.push({service:'paramount',url:`https://www.cbssports.com/watch/${cfg.slug}`,games:active.filter(g=>g.league===league),parse:paramountLinks});
+ if(active.some(g=>usaLeagues[g.league]&&g.broadcasts.includes('USA Network')))jobs.push({service:'usa',url:'https://www.usanetwork.com/',games:active.filter(g=>usaLeagues[g.league]&&g.broadcasts.includes('USA Network')),parse:usaLinks});
  await Promise.all(jobs.map(async job=>{
   try{const text=await catalogHtml(job.url);for(const g of job.games){const links=job.parse(text,g,job.url);if(links.length)g.links=[...links,...g.links.filter(l=>l.service!==job.service||l.kind==='event')];}if(statuses[job.service]!==false)statuses[job.service]=true;}
   catch{statuses[job.service]=false;}
  }));return statuses;
 }
-export function appleTvCandidate(link:WatchLink){return link.kind==='event'&&link.playbackTarget!=='browser_only'&&!new URL(link.url).hostname.endsWith('cbssports.com');}
+export function appleTvUrl(link:WatchLink):string|null{
+ if(link.kind!=='event'||link.playbackTarget==='browser_only')return null;
+ try{
+  const web=new URL(link.url);
+  if(web.hostname==='cbssports.com'||web.hostname.endsWith('.cbssports.com'))return null;
+  if(['prime','prime-hhn'].includes(link.service)){
+   const app=new URL(link.appUrl||link.url);
+   return app.origin==='https://watch.amazon.com'&&!app.username&&!app.password&&app.pathname==='/detail'&&/^amzn1\.dv\.gti\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(app.searchParams.get('gti')||'')?app.href:null;
+  }
+  if(['espn','espn-plus'].includes(link.service)&&/^sportscenter:\/\/x-callback-url\/showWatchStream\?playID=[a-zA-Z0-9-]+$/.test(link.appUrl||''))return link.appUrl!;
+  return link.url;
+ }catch{return null;}
+}
+export function appleTvCandidate(link:WatchLink){return appleTvUrl(link)!==null;}

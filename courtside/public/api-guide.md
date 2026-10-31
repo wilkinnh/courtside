@@ -106,3 +106,8 @@ data:
 ```
 
 Replace these example entity IDs with your own. Reload scripts after updating the script in Home Assistant.
+
+
+### Apple TV URL routing correction
+
+Prime/HHN `apple_tv_url` uses `https://watch.amazon.com/detail?gti=...&territory=US&ref_=share_ios_event&r=web`, with the matched event's full `amzn1.dv.gti` from Amazon detail metadata. The compact Prime ID is not substituted for the GTI. If that GTI is missing, the resolver does not return the known nonworking Prime web detail URL as an Apple TV candidate. `watch_url` remains the browser page. ESPN uses its provider-supplied `sportscenter://` app URL when available. These formats were tested by the user; individual games still require entitlement and device verification.

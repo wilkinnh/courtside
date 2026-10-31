@@ -1,4 +1,4 @@
-import {enrichProviderCatalogs,appleTvCandidate} from './provider-catalogs.ts';
+import {enrichProviderCatalogs,appleTvCandidate,appleTvUrl} from './provider-catalogs.ts';
 import {enrichPrime} from './prime.ts';
 import {leagues, services, type Game, type WatchLink} from './catalog.ts';
 const cache = new Map<string,{at:number;data:any}>();
@@ -9,7 +9,7 @@ export async function jsonFetch(url:string){
  const job=(async()=>{const r=await fetch(url,{headers:{Accept:'application/json'},signal:AbortSignal.timeout(12000)});if(!r.ok)throw new Error(`Provider returned ${r.status}`);const data=await r.json();cache.set(url,{at:Date.now(),data});if(cache.size>100)cache.delete(cache.keys().next().value!);return data;})();
  pending.set(url,job);try{return await job;}finally{pending.delete(url);}
 }
-const allowedHosts=['espn.com','disneyplus.com','hbomax.com','max.com','xfinity.com','cbssports.com','nba.com','peacocktv.com','amazon.com','primevideo.com','paramountplus.com','tv.apple.com','foxsports.com','fox.com','mlb.com','nhl.com','nfl.com','youtube.com','tv.youtube.com','hulu.com','dazn.com'];
+const allowedHosts=['espn.com','usanetwork.com','disneyplus.com','hbomax.com','max.com','xfinity.com','cbssports.com','nba.com','peacocktv.com','amazon.com','primevideo.com','paramountplus.com','tv.apple.com','foxsports.com','fox.com','mlb.com','nhl.com','nfl.com','youtube.com','tv.youtube.com','hulu.com','dazn.com'];
 export function safeUrl(value:unknown){try{const u=new URL(String(value));return u.protocol==='https:' && !u.username && !u.password && allowedHosts.some(h=>u.hostname===h||u.hostname.endsWith('.'+h))?u.href:null;}catch{return null;}}
 function serviceFor(url:string){const h=new URL(url).hostname;return h.includes('espn')?'espn':h.includes('nba')?'nba':h.includes('peacock')?'peacock':h.includes('amazon')||h.includes('primevideo')?'prime':h.includes('paramount')?'paramount':h.includes('apple')?'apple':h.includes('fox')?'fox':'provider';}
 export function extractLinks(raw:any):WatchLink[]{
@@ -21,7 +21,7 @@ export function extractLinks(raw:any):WatchLink[]{
  Object.values(v).forEach(x=>walk(x,depth+1));};walk(raw,0);return found.filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i);
 }
 export function normalize(e:any,league:string):Game{
- const c=e.competitions?.[0]||{};const broadcasts=[...new Set<string>([...(c.broadcasts||[]).flatMap((b:any)=>b.names||b.media?.map?.((m:any)=>m.shortName)||[b.media?.shortName].filter(Boolean)),...(c.geoBroadcasts||[]).filter((b:any)=>!b.region||b.region==='us').map((b:any)=>b.media?.shortName).filter(Boolean)])];
+ const c=e.competitions?.[0]||{};const broadcasts=[...new Set<string>([...(c.broadcasts||[]).flatMap((b:any)=>b.names||b.media?.map?.((m:any)=>m.shortName)||[b.media?.shortName].filter(Boolean)),...(c.geoBroadcasts||[]).filter((b:any)=>!b.region||b.region==='us').map((b:any)=>b.media?.shortName).filter(Boolean)].map((name:string)=>/^(usa|usa net|usa network)$/i.test(name.trim())?'USA Network':name))];
  const links=extractLinks({links:e.links,broadcasts:c.geoBroadcasts});
  for(const s of services)if(broadcasts.some(b=>s.channels.some(n=>n.toLowerCase()===b.toLowerCase()))&&!links.some(l=>l.service===s.id))links.push({service:s.id,label:s.name,url:s.url,kind:'service',source:'Broadcast name match',verifiedAt:new Date().toISOString(),access:'subscription_required'});
  return {id:String(e.id),league,name:e.name||(c.competitors||[]).slice().sort((a:any,b:any)=>a.homeAway==='away'?-1:1).map((t:any)=>t.team?.displayName||'TBD').join(' at '),date:e.date||c.date,state:e.status?.type?.state||c.status?.type?.state||'pre',detail:e.status?.type?.shortDetail||c.status?.type?.shortDetail||'Scheduled',venue:c.venue?.fullName||'',teams:(c.competitors||[]).map((t:any)=>({id:String(t.team?.id||t.id),name:t.team?.displayName||t.athlete?.displayName||'TBD',shortName:t.team?.shortDisplayName,abbreviation:t.team?.abbreviation||'TBD',logo:t.team?.logo||t.team?.logos?.[0]?.href||'',score:t.score||'0',homeAway:t.homeAway,record:t.records?.find((r:any)=>r.type==='total')?.summary||''})).sort((a:any,b:any)=>a.homeAway==='away'?-1:1),broadcasts,links,eventUrl:safeUrl(e.links?.find((l:any)=>l.rel?.includes('summary'))?.href)||''};
@@ -72,7 +72,7 @@ export async function resolveGame(league:string,id:string,selected:string[],over
  const options=selectedLinks(event,selected).sort((a,b)=>Number(b.kind==='event')-Number(a.kind==='event'));
  const best=options.find(o=>o.kind==='event'&&o.language==='en')||options.find(o=>o.kind==='event')||null;
  const appleBest=options.find(o=>appleTvCandidate(o)&&o.language==='en')||options.find(appleTvCandidate)||null;
- return {event,options,provider_catalogs,apple_tv_url:appleBest?.url||null,prime_catalog_available,link_catalog_available:!!catalog,device_verified:false,watch_url:best?.url||null,link_kind:best?.kind||null,autoplay_safe:false,launchable:!!appleBest,reason:best?'Event page found. Device app support, sign-in, entitlement and blackouts still apply.':'No event-specific watch URL found for your selected services. Service pages are excluded from watch_url.',resolved_at:new Date().toISOString()};
+ return {event,options,provider_catalogs,apple_tv_url:appleBest?appleTvUrl(appleBest):null,prime_catalog_available,link_catalog_available:!!catalog,device_verified:false,watch_url:best?.url||null,link_kind:best?.kind||null,autoplay_safe:false,launchable:!!appleBest,reason:best?'Event page found. Device app support, sign-in, entitlement and blackouts still apply.':'No event-specific watch URL found for your selected services. Service pages are excluded from watch_url.',resolved_at:new Date().toISOString()};
 }
 export function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
 export async function api(request:Request):Promise<Response>{
