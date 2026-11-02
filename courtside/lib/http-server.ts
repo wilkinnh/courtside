@@ -1,4 +1,5 @@
 import http from 'node:http';
+import {homeAssistantApi,type HomeAssistantConfig} from './home-assistant.ts';
 import {timingSafeEqual} from 'node:crypto';
 import {readFile, stat} from 'node:fs/promises';
 import {resolve, extname, sep} from 'node:path';
@@ -11,7 +12,7 @@ const types:Record<string,string>={
  '.ico':'image/x-icon','.woff2':'font/woff2','.md':'text/plain; charset=utf-8',
  '.yaml':'text/plain; charset=utf-8','.txt':'text/plain; charset=utf-8',
 };
-export function createCourtsideServer({assetDirectory,key}:{assetDirectory:string;key?:string}){
+export function createCourtsideServer({assetDirectory,key,homeAssistant}:{assetDirectory:string;key?:string;homeAssistant?:HomeAssistantConfig}){
  const root=resolve(assetDirectory);
  const server=http.createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
@@ -27,10 +28,11 @@ export function createCourtsideServer({assetDirectory,key}:{assetDirectory:strin
      const expected=Buffer.from('Bearer '+key),received=Buffer.from(req.headers.authorization||'');
      if(received.length!==expected.length||!timingSafeEqual(received,expected)){send(401,'Unauthorized');return;}
     }
+    if(url.pathname.startsWith('/api/v1/home-assistant/')&&req.method==='POST'&&!req.headers['content-type']?.startsWith('application/json')){send(415,'Content-Type must be application/json');return;}
     let size=0;const chunks:Buffer[]=[];
     for await(const chunk of req){size+=chunk.length;if(size>32768){send(413,'Payload too large');return;}chunks.push(chunk);}
     const request=new Request(url,{method:req.method,headers:{'Content-Type':'application/json'},...(['GET','HEAD'].includes(req.method||'GET')?{}:{body:Buffer.concat(chunks).toString()})});
-    const result=await api(request);res.writeHead(result.status,Object.fromEntries(result.headers));res.end(await result.text());return;
+    const result=await (url.pathname.startsWith('/api/v1/home-assistant/')?homeAssistantApi(request,homeAssistant):api(request));res.writeHead(result.status,Object.fromEntries(result.headers));res.end(await result.text());return;
    }
    if(!['GET','HEAD'].includes(req.method||'')){send(405,'Method not allowed');return;}
    let pathname:string;try{pathname=decodeURIComponent(url.pathname);}catch{send(400,'Invalid path');return;}

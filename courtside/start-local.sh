@@ -2,13 +2,13 @@
 set -euo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 
-mode="${1:-auto}"
+mode="${1:---node}"
 case "$mode" in
   --help|-h)
     cat <<'HELP'
 Usage: ./start-local.sh [--node|--docker]
 
-Default: use Docker Compose when its daemon is running; otherwise use Node.
+Default: build and run with Node. Docker is used only with --docker.
 --node    Build and run in this terminal. Ctrl+C stops the server.
 --docker  Build and run in the background. Stop with: docker compose down
 
@@ -17,7 +17,7 @@ Defaults to http://localhost:8788, accessible only on this computer.
 For LAN access, set BIND_ADDRESS=0.0.0.0 in .env.
 HELP
     exit 0 ;;
-  auto|--node|--docker) ;;
+  --node|--docker) ;;
   *) echo "Unknown option: $mode. Use --help." >&2; exit 2 ;;
 esac
 
@@ -35,7 +35,7 @@ if [[ "$mode" == "--docker" ]]; then
   exit 1
 fi
 if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
-  echo "Install Node.js 22.13+ (with npm), or install and start Docker, then run this script again." >&2
+  echo "Install Node.js 22.13+ (with npm), then run this script again." >&2
   exit 1
 fi
 exec node scripts/start-local.mjs

@@ -13,6 +13,12 @@ if(!existsSync('.env'))copyFileSync('.env.example','.env');
 process.loadEnvFile('.env');
 process.env.HOST ||= process.env.BIND_ADDRESS || '127.0.0.1';
 process.env.PORT ||= '8788';
+// Keep installation downloads and temporary files on the project's drive.
+// This also avoids filling a small system disk when the project is external.
+mkdirSync('.local/npm-cache',{recursive:true});
+mkdirSync('.local/tmp',{recursive:true});
+process.env.npm_config_cache = fileURLToPath(new URL('../.local/npm-cache/',import.meta.url));
+process.env.TMPDIR = fileURLToPath(new URL('../.local/tmp/',import.meta.url));
 const port=Number(process.env.PORT);
 if(!Number.isInteger(port)||port<1||port>65535){console.error('PORT must be between 1 and 65535.');process.exit(1);}
 if(process.env.COURTSIDE_API_KEY&&process.env.COURTSIDE_API_KEY.length<24){console.error('COURTSIDE_API_KEY must be at least 24 characters, or empty.');process.exit(1);}

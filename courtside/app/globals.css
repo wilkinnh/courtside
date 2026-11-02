@@ -8,3 +8,5 @@
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 .api-tester{margin-bottom:24px}.api-tester>h2{margin-top:10px}.api-tester textarea{display:block;width:100%;min-height:250px;resize:vertical;background:#10170e;color:#dce9ce;border:1px solid #46573a;border-radius:6px;padding:15px;font:12px/1.7 monospace;margin-bottom:14px}.tester-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.api-tester button:disabled{opacity:.55;cursor:wait}.api-tester h3{margin:20px 0 12px}.tester-summary{margin:16px 0}.tester-summary>div{display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;border-bottom:1px solid var(--border);padding:10px 0;font-size:12px}.tester-summary dt{color:#9eaf8c}.tester-summary dd{margin:0;overflow-wrap:anywhere}.tester-response{max-height:480px}.api-tester textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}@media(max-width:600px){.tester-summary>div{grid-template-columns:1fr;gap:4px}}
+
+.ha-player{margin:22px 0;padding:18px;border:1px solid var(--border);border-radius:9px}.ha-player h3{margin-bottom:8px}.ha-player .primary{margin-top:14px}

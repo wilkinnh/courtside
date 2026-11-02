@@ -5,12 +5,12 @@ A Node.js website and REST API for finding sports across your services, includin
 ## One-command startup
 
 ```sh
-./start-local.sh
+./start.sh
 ```
 
-The script works from any directory, creates `.env` only if missing, and uses Docker Compose when its daemon is running. Otherwise it installs dependencies as needed, builds the website and starts Node in the foreground. Existing `.env` settings are preserved.
+The script works from any directory, creates `courtside/.env` only if missing, installs dependencies as needed, builds the website and starts Node in the foreground. Existing `.env` settings are preserved. Dependency downloads and temporary files stay on the project drive in `courtside/.local`.
 
-Force a mode with `./start-local.sh --node` or `./start-local.sh --docker`. Node stops with Ctrl+C; Docker runs in the background and stops with `docker compose down`. Use `./start-local.sh --help` for options.
+Open **http://localhost:8788** and keep the terminal open. Stop Node with Ctrl+C. For Docker, explicitly run `./courtside/start-local.sh --docker`; the root start script always uses Node.
 
 ## Docker (recommended)
 
@@ -81,3 +81,7 @@ See [API guide](public/api-guide.md) and [deep-link research](docs/research.md).
 - `npm run build`: standalone browser build (same as `build:local`).
 
 Do not publish this project to Sites or Cloudflare. `.openai/hosting.json` retains the old Site ID only for cleanup tracking; it is excluded from Docker and unused by the Node build.
+
+## Send games to a Home Assistant player
+
+Game watch options now include player discovery, provider selection and a Live / From beginning preference. Follow the [setup guide](courtside/public/home-assistant-setup.md) for server-only authentication, Docker networking, and the [playback script](courtside/public/home-assistant-play.yaml). Customize its provider button sequences on your TV before relying on automatic navigation.

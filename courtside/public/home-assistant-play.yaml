@@ -1,0 +1,66 @@
+# Merge into configuration.yaml. For scripts.yaml omit script: and unindent once.
+script:
+  courtside_play:
+    alias: Courtside — play selected game
+    mode: queued
+    max: 10
+    fields:
+      media_player:
+        required: true
+        selector:
+          entity:
+            domain: media_player
+      media_url:
+        required: true
+        selector:
+          text:
+      provider:
+        required: true
+        selector:
+          text:
+      start_mode:
+        default: live
+        selector:
+          select:
+            options: [live, beginning]
+    sequence:
+      - action: media_player.play_media
+        target:
+          entity_id: "{{ media_player }}"
+        data:
+          media_content_type: url
+          media_content_id: "{{ media_url }}"
+      - variables:
+          # Map actual media player entities to their remote entities.
+          remotes: {}
+          # Example: {media_player.living_room: remote.living_room}
+          provider_steps: {}
+          # Replace {} with your tested sequences. EXAMPLES ONLY:
+          # prime:
+          #   live: [select, right, select]
+          #   beginning: [select, select]
+          # prime-hhn:
+          #   live: [select]
+          #   beginning: [select, left, select]
+          # peacock:
+          #   live: [select]
+          #   beginning: [select, left, select]
+      - variables:
+          remote_entity: "{{ remotes.get(media_player, '') }}"
+          buttons: "{{ provider_steps.get(provider, {}).get(start_mode | default('live'), []) }}"
+      - if:
+          - condition: template
+            value_template: "{{ remote_entity != '' and buttons | length > 0 }}"
+        then:
+          - delay:
+              seconds: 8
+          - repeat:
+              for_each: "{{ buttons }}"
+              sequence:
+                - action: remote.send_command
+                  target:
+                    entity_id: "{{ remote_entity }}"
+                  data:
+                    command: "{{ repeat.item }}"
+                - delay:
+                    seconds: 2
