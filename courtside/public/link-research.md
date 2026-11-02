@@ -163,3 +163,9 @@ The next evidence needed for these native routes is an actual provider-shared ev
 `watch_url` remains the best exact browser event page. New `apple_tv_url` excludes known browser-only links and may select another subscribed provider. `launchable` follows that app-link candidate; `device_verified` and `autoplay_safe` remain false. The downloadable Home Assistant YAML now uses `apple_tv_url` with media type `url`.
 
 Provider HTML fetches are bounded, cached for five minutes, deduplicated in flight and parsed as JSON without executing scripts. The Node/Docker runtime includes the new adapter. Saved event links now accept Disney+, HBO Max/Max, Xfinity and CBS Sports domains, which the previous allowlist accidentally omitted. No cloud deployment is involved.
+
+### Peacock Apple TV handoff follow-up
+
+A user reported that the Eagles vs. Commanders `/watch/asset/sports/...` URL launches Peacock without selecting the game. Courtside now retains that browser URL but converts validated Peacock sports asset paths for Apple TV to `/deeplink?deeplinkData=` with URL-encoded JSON containing the same UUID as `pvid`, `type: PROGRAMME`, and `action: PLAY`.
+
+This follows a [firsthand Apple TV test report](https://community.home-assistant.io/t/appletv-integration-deep-link-urls-which-are-working/592862/35). That report tested an episode, not this live sports event. Applying the format to sports is a candidate fix; live-event routing and playback still require a device test. `deviceVerified` and `autoplay_safe` remain false.

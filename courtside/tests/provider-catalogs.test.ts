@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {peacockLinks,paramountLinks,appleTvCandidate,titleMatches} from '../lib/provider-catalogs.ts';
+import {peacockLinks,paramountLinks,appleTvCandidate,appleTvUrl,titleMatches} from '../lib/provider-catalogs.ts';
 import {primeCards,matchPrimeDetail} from '../lib/prime.ts';
 import {safeUrl} from '../lib/sports.ts';
 import type {Game} from '../lib/catalog.ts';
@@ -18,3 +18,15 @@ test('CBS event links require Paramount authentication and are explicitly browse
 test('CBS rejects unverified anchors, finals, wrong league, opponents and kickoff',()=>{assert.equal(paramountLinks(cbsHtml(cbsItem,false),cbsGame,'').length,0);for(const g of [{...cbsItem.game,gameStatusDesc:'FINAL'},{...cbsItem.game,leagueAbbr:'EPL'},{...cbsItem.game,homeTeam:{mediumName:'Everton'}},{...cbsItem.game,scheduledTimeEpoch:cbsItem.game.scheduledTimeEpoch+86400}])assert.equal(paramountLinks(cbsHtml({...cbsItem,game:g}),cbsGame,'').length,0)});
 test('Prime distinguishes base subscription from add-ons and checks game title',()=>{const card={entityType:'EVENT',widgetType:'TitleCard',title:'Knicks vs. 76ers',synopsis:'NBA Cup',link:{url:'/detail/0G0HX72L0PP0ZHB4W5F4DDA0H6'},liveInfo:{status:'UPCOMING'},entitlementCues:{focusMessage:{message:'Watch with a free Prime trial'}}};const cards=primeCards(`<script>${JSON.stringify(card)}</script>`);assert.equal(cards[0].service,'prime');assert.equal(primeCards(`<script>${JSON.stringify({...card,entitlementCues:{focusMessage:{message:'Free trial of Paramount+'}}})}</script>`).length,0);const g={...game,league:'nba',date:'2026-10-30T23:00Z',teams:[{name:'New York Knicks'},{name:'Philadelphia 76ers'}]} as Game;const detail={entityType:'EVENT',title:card.title,compactGti:'0G0HX72L0PP0ZHB4W5F4DDA0H6',liveState:{id:'upcoming'},pageDateTimeBadge:'Oct 30, 2026 7 PM EDT'};const text=`<script>${JSON.stringify({init:{preparations:{body:{atf:{state:{detail:{headerDetail:{a:detail}}}}}}}})}</script>`;assert.equal(matchPrimeDetail(text,cards[0],g)?.service,'prime');});
 test('saved links support every owned web provider without allowing spoofed hosts',()=>{for(const host of ['www.disneyplus.com','play.hbomax.com','www.xfinity.com','www.cbssports.com']){assert.ok(safeUrl('https://'+host+'/watch/test'));assert.equal(safeUrl('https://'+host+'.evil.example/watch/test'),null)}});
+
+test('Peacock Apple TV handoff sends the exact sports asset as an encoded playback payload',()=>{
+ const url='https://www.peacocktv.com/watch/asset/sports/eagles-vs.-commanders/179340d1-fca6-3d44-b69a-a0db822d82ef';
+ const link={...peacockLinks(html([item]),game,'')[0],url};
+ const app=new URL(appleTvUrl(link)!);
+ assert.equal(app.origin+app.pathname,'https://www.peacocktv.com/deeplink');
+ assert.deepEqual(JSON.parse(app.searchParams.get('deeplinkData')!),{pvid:'179340d1-fca6-3d44-b69a-a0db822d82ef',type:'PROGRAMME',action:'PLAY'});
+ assert.equal(link.url,url);
+ assert.equal(link.deviceVerified,false);
+ assert.equal(appleTvUrl({...link,playbackTarget:'browser_only'}),null);
+ for(const other of [url.replace('www.peacocktv.com','www.peacocktv.com.evil.example'),url.replace('179340d1-fca6-3d44-b69a-a0db822d82ef','bad-id'),url.replace('/sports/','/movies/')])assert.equal(appleTvUrl({...link,url:other}),other);
+});

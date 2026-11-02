@@ -1,4 +1,5 @@
 import {services} from './catalog.ts';
+import {peacockAppUrl} from './provider-catalogs.ts';
 import {safeUrl} from './sports.ts';
 export type HomeAssistantConfig={url:string;token:string;script?:string};
 export async function homeAssistantApi(request:Request,config?:HomeAssistantConfig):Promise<Response>{
@@ -24,6 +25,7 @@ export async function homeAssistantApi(request:Request,config?:HomeAssistantConf
   }
   let data:any;try{data=await request.json();}catch{return json(400,{error:'Invalid JSON'});}
   if(!data||typeof data.media_player!=='string'||!/^media_player\.[a-z0-9_]+$/.test(data.media_player)||!services.some(s=>s.id===data.provider)||!['live','beginning'].includes(data.start_mode)||typeof data.media_url!=='string'||data.media_url.length>4096||!(safeUrl(data.media_url)||(['espn','espn-plus'].includes(data.provider)&&/^sportscenter:\/\/x-callback-url\/showWatchStream\?playID=[a-zA-Z0-9-]+$/.test(data.media_url))))return json(400,{error:'Provide a media player, supported provider URL, provider and live/beginning start mode.'});
+  const mediaUrl=data.provider==='peacock'?peacockAppUrl(data.media_url):data.media_url;
   stage='checking the selected player';
   const player=await call('states/'+data.media_player);
   if(['unavailable','unknown'].includes(player.state))return json(409,{error:'This media player is unavailable. Refresh players and try again.'});
@@ -32,7 +34,7 @@ export async function homeAssistantApi(request:Request,config?:HomeAssistantConf
   if(['unavailable','unknown'].includes(scriptState.state))return json(409,{error:`Home Assistant script ${script} is unavailable. Check its configuration and reload scripts.`});
   stage='submitting playback to the script';
   // turn_on returns once scheduled, so provider delays do not hold the HTTP request open.
-  await call('services/script/turn_on',{entity_id:script,variables:{media_player:data.media_player,media_url:data.media_url,provider:data.provider,start_mode:data.start_mode}});
+  await call('services/script/turn_on',{entity_id:script,variables:{media_player:data.media_player,media_url:mediaUrl,provider:data.provider,start_mode:data.start_mode}});
   console.info(`[Home Assistant] Playback submitted to ${script} for ${data.media_player} (${data.provider}, ${data.start_mode}).`);
   return json(202,{message:`Playback submitted to ${script}. Check this script’s trace in Home Assistant; acceptance does not confirm video playback.`});
  }catch(error){console.warn(`[Home Assistant] Failed while ${stage}; script: ${script}.`);return json(502,{stage,error:error instanceof Error&&error.message.startsWith('Home Assistant')?error.message:`Failed while ${stage}. Check the Home Assistant connection. If playback was submitted, check the script trace before retrying.`});}

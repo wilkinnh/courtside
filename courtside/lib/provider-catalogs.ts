@@ -105,11 +105,23 @@ export async function enrichProviderCatalogs(games:Game[]){
   catch{statuses[job.service]=false;}
  }));return statuses;
 }
+// Shared by the resolver and the Home Assistant handoff, including saved links.
+export function peacockAppUrl(url:string):string{
+ try{
+  const web=new URL(url);
+  const asset=/^\/watch\/asset\/sports\/[^/?#]+\/([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})$/i.exec(web.pathname);
+  if(web.protocol==='https:'&&['www.peacocktv.com','peacocktv.com'].includes(web.hostname)&&!web.username&&!web.password&&!web.port&&asset){
+   return 'https://www.peacocktv.com/deeplink?deeplinkData='+encodeURIComponent(JSON.stringify({pvid:asset[1],type:'PROGRAMME',action:'PLAY'}));
+  }
+ }catch{}
+ return url;
+}
 export function appleTvUrl(link:WatchLink):string|null{
  if(link.kind!=='event'||link.playbackTarget==='browser_only')return null;
  try{
   const web=new URL(link.url);
   if(web.hostname==='cbssports.com'||web.hostname.endsWith('.cbssports.com'))return null;
+  if(link.service==='peacock')return peacockAppUrl(link.url);
   if(['prime','prime-hhn'].includes(link.service)){
    const app=new URL(link.appUrl||link.url);
    return app.origin==='https://watch.amazon.com'&&!app.username&&!app.password&&app.pathname==='/detail'&&/^amzn1\.dv\.gti\.[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(app.searchParams.get('gti')||'')?app.href:null;
