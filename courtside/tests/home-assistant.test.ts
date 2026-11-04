@@ -27,10 +27,10 @@ test('HA discovery, script variables and failures',async()=>{
   for(const change of [{media_url:'javascript:bad'},{provider:'bad'},{start_mode:'bad'},{media_player:'sensor.tv'}])assert.equal((await homeAssistantApi(request('play',{...payload,...change}),config)).status,400);
   calls.length=0;
   const fox=await homeAssistantApi(request('play',{...payload,provider:'fox',media_url:'https://www.foxsports.com/live/fs1'}),config);
-  assert.equal(fox.status,422);assert.equal(calls.length,0);assert.match((await fox.json()).error,/FOX One/);
+  assert.equal(fox.status,422);assert.equal(calls.length,0);assert.match((await fox.json() as {error:string}).error,/FOX One/);
 
   globalThis.fetch=async(input,options)=>{calls.push({url:String(input),options});return String(input).endsWith('/states/script.courtside_play')?new Response('{}',{status:404}):Response.json({state:'idle'});};
-  const missing=await homeAssistantApi(request('play',payload),config);assert.equal(missing.status,502);assert.match((await missing.json()).error,/script.courtside_play was not found/);assert.equal(calls.some(c=>c.options.method==='POST'),false);
+  const missing=await homeAssistantApi(request('play',payload),config);assert.equal(missing.status,502);assert.match((await missing.json() as {error:string}).error,/script.courtside_play was not found/);assert.equal(calls.some(c=>c.options.method==='POST'),false);
   globalThis.fetch=async(input)=>Response.json({state:String(input).includes('/states/script.')?'unavailable':'idle'});
   assert.equal((await homeAssistantApi(request('play',payload),config)).status,409);
   globalThis.fetch=async()=>Response.json({state:'unavailable'});assert.equal((await homeAssistantApi(request('play',payload),config)).status,409);

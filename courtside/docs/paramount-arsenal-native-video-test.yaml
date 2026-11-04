@@ -1,0 +1,7 @@
+# Candidate derived from Paramount IOSPlatform video route; tvOS unverified.
+action: media_player.play_media
+target:
+  entity_id: media_player.YOUR_APPLE_TV
+data:
+  media_content_type: url
+  media_content_id: "pplus://www.paramountplus.com/shows/stream/video/aadcb004-4ada-46a0-9f46-2afa641e981f/"

@@ -1,0 +1,169 @@
+{
+  "captured_at": "2026-11-04T20:53:48.726535+00:00",
+  "source_page": "https://tv.apple.com/us/sporting-event/sk-slavia-praha-vs-arsenal-fc/umc.cse.3kwsie6gl99cg2i04jxcbyvxo",
+  "source_endpoint": "https://uts-api.itunes.apple.com/uts/v3/sporting-events/umc.cse.3kwsie6gl99cg2i04jxcbyvxo",
+  "storefront": "US",
+  "request_platform": "web",
+  "espn_event_id": "401915381",
+  "content": {
+    "id": "umc.cse.3kwsie6gl99cg2i04jxcbyvxo",
+    "title": "SK Slavia Praha vs. Arsenal FC",
+    "leagueName": "UEFA Champions League",
+    "eventTime": {
+      "gameKickOffStartTime": 1793822400000,
+      "liveBadgeTime": {
+        "endTime": 1793838900000,
+        "startTime": 1793822400000
+      },
+      "playerInfoDisplayTime": {
+        "endTime": 1793833200000,
+        "startTime": 1793822400000
+      },
+      "playerInfoTransportBarTime": {
+        "endTime": 1793833200000,
+        "startTime": 1793822400000
+      },
+      "tuneInTime": {
+        "endTime": 1793838900000,
+        "startTime": 1793822400000
+      }
+    }
+  },
+  "competitors": [
+    {
+      "id": "umc.cst.52fjbndhp79ywmwut2a0rzwm5",
+      "name": "SK Slavia Praha",
+      "shortName": "Slavia Praha",
+      "isHome": true
+    },
+    {
+      "id": "umc.cst.5gx97l2c8jun1ibioji2x3i0y",
+      "name": "Arsenal FC",
+      "shortName": "Arsenal",
+      "isHome": false
+    }
+  ],
+  "paramount_channel": {
+    "id": "tvs.sbd.10120",
+    "name": "Paramount+",
+    "appBundleIds": [
+      "com.cbsvideo.app"
+    ]
+  },
+  "playable": {
+    "id": "tvs.sbd.10120:aadcb004-4ada-46a0-9f46-2afa641e981f:d6f5c5b4",
+    "canonicalId": "umc.cse.3kwsie6gl99cg2i04jxcbyvxo",
+    "externalId": "aadcb004-4ada-46a0-9f46-2afa641e981f",
+    "externalServiceId": "com.CBS.CBSTV.US.ebs.sub-v3",
+    "channelId": "tvs.sbd.10120",
+    "serviceName": "US Digital Sports",
+    "title": "Slavia Praha vs. Arsenal",
+    "airingType": "Live",
+    "eventTime": {
+      "gameKickOffStartTime": 1793822400000,
+      "liveBadgeTime": {
+        "endTime": 1793838900000,
+        "startTime": 1793822400000
+      },
+      "playerInfoDisplayTime": {
+        "endTime": 1793833200000,
+        "startTime": 1793822400000
+      },
+      "playerInfoTransportBarTime": {
+        "endTime": 1793833200000,
+        "startTime": 1793822400000
+      },
+      "tuneInTime": {
+        "endTime": 1793838900000,
+        "startTime": 1793822400000
+      }
+    },
+    "punchoutUrls": {
+      "open": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f?searchReferral=appleatv&source=spotlight#open",
+      "play": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f?searchReferral=appleatv&source=spotlight"
+    },
+    "locales": [
+      {
+        "audioTrackFormats": [
+          "AAC"
+        ],
+        "displayName": "English (United States)",
+        "locale": "en_US"
+      }
+    ],
+    "primaryLocale": {
+      "displayName": "English (United States)",
+      "locale": "en_US"
+    }
+  },
+  "device_verified": true,
+  "device_test": {
+    "reported_on": "2026-11-04",
+    "method": "Home Assistant media_player.play_media, media_content_type=url",
+    "tested_url": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f?searchReferral=appleatv&source=spotlight",
+    "result": "Paramount+ opened, but not the game",
+    "game_routing_verified": false,
+    "app_version": null,
+    "tvos_version": null
+  },
+  "https_device_test": {
+    "reported_on": "2026-11-04",
+    "method": "Home Assistant",
+    "tested_url": "https://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f?searchReferral=appleatv&source=spotlight",
+    "result": "User reports: fails from home assistant",
+    "exact_error": "Failed to perform the action media_player.play_media. Unknown error",
+    "failure_stage": "Home Assistant action reports an error; underlying cause not yet identified",
+    "game_routing_verified": false
+  },
+  "paramount_page_followup": {
+    "source": "https://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f/",
+    "http_status": 200,
+    "note": "Server redirects the original path to one with a trailing slash. Page identifies the same UUID and Slavia Praha vs. Arsenal. IOSPlatform is not proof of tvOS support.",
+    "watch_action_targets": [
+      {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.paramountplus.com/live-tv/stream/uefa-champions-league/video/aadcb004-4ada-46a0-9f46-2afa641e981f/slavia-praha-vs-arsenal/",
+        "actionPlatform": "http://schema.org/DesktopWebPlatform",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "EntryPoint",
+        "urlTemplate": "android-app://com.cbs.app/cbs/https://www.paramountplus.com/live-tv/stream/uefa-champions-league/video/aadcb004-4ada-46a0-9f46-2afa641e981f/slavia-praha-vs-arsenal/?campaign=ftag:ADLbe6cacd&fg=1",
+        "actionPlatform": "http://schema.org/AndroidPlatform",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.paramountplus.com/shows/stream/video/aadcb004-4ada-46a0-9f46-2afa641e981f/",
+        "actionPlatform": "http://schema.org/IOSPlatform",
+        "inLanguage": "en"
+      },
+      {
+        "@type": "EntryPoint",
+        "urlTemplate": "https://www.paramountplus.com/shows/stream/video/aadcb004-4ada-46a0-9f46-2afa641e981f/",
+        "actionPlatform": "http://schema.googleapis.com/GoogleVideoCast",
+        "inLanguage": "en"
+      }
+    ],
+    "native_video_route_candidate": "pplus://www.paramountplus.com/shows/stream/video/aadcb004-4ada-46a0-9f46-2afa641e981f/",
+    "candidate_derivation": "Replace https scheme on provider-published IOSPlatform route with provider-declared pplus scheme; not observed as a complete native URL.",
+    "device_test": "Pending"
+  },
+  "browser_confirmation": {
+    "source": "User signed-in browser",
+    "url": "https://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f/",
+    "result": "User supplied this URL while viewing Arsenal"
+  },
+  "native_live_route_test": {
+    "tested_url": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f/",
+    "result": "User confirmed correct game playback after force quitting Paramount+ and launching fresh. Earlier app state produced unexpected Live TV playback.",
+    "game_routing_verified": true,
+    "verification_source": "User device test",
+    "reported_on": "2026-11-04",
+    "required_observed_condition": "Fresh launch after force quit",
+    "warm_app_reliability": "Not verified; prior unexpected behavior",
+    "app_version": null,
+    "tvos_version": null
+  },
+  "verification_scope": "This exact URL and Arsenal event on the user Apple TV, from a fresh Paramount+ launch only; no general autoplay or warm-state reliability claim."
+}

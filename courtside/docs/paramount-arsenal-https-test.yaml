@@ -1,0 +1,8 @@
+# Secondary experiment: native scheme opened the app but not the game.
+# Replace the entity ID. HTTPS event routing is unverified.
+action: media_player.play_media
+target:
+  entity_id: media_player.YOUR_APPLE_TV
+data:
+  media_content_type: url
+  media_content_id: "https://www.paramountplus.com/live-tv/stream/uefa-champions-league/aadcb004-4ada-46a0-9f46-2afa641e981f?searchReferral=appleatv&source=spotlight"

@@ -115,3 +115,11 @@ Prime/HHN `apple_tv_url` uses `https://watch.amazon.com/detail?gti=...&territory
 FOX One program links (`https://www.fox.com/watch/epg/<program-id>/<title>`) can be saved for the matching event using the FOX service. Preserve the provider-issued URL, including its query parameters. These are browser-only links after failed Apple TV device tests, not permanent FS1/FS2 links; do not reuse one program URL for other games. FOX Sports browser channel URLs remain excluded from TV handoff.
 
 Apple TV fallback: use Home Assistant `media_player.select_source` with the exact FOX One app name from the player’s `source_list`. This opens the app only; select the channel manually. No verified FOX One direct-play URL is currently configured.
+
+### Paramount+ Apple TV event links
+
+For active Champions League, Serie A, and Carabao Cup games listed on Paramount+, Courtside searches Apple's US sports catalog and matches both teams, home/away, competition, and kickoff. A unique English live Paramount+ playable supplies the event UUID. No match or ambiguous feeds leave the native event link unavailable. Catalog coverage and team aliases may limit matches.
+
+`watch_url` remains HTTPS. `apple_tv_url` and the website's player handoff use `pplus://www.paramountplus.com/live-tv/stream/<competition>/<event UUID>/`, with a trailing slash and no referral parameters. The Home Assistant endpoint accepts this narrowly validated native route only for provider `paramount`, and also converts matching Paramount HTTPS event URLs. Saved browser event overrides can use the HTTPS route; arbitrary custom schemes remain disallowed.
+
+The user verified Arsenal playback from a fresh Paramount+ launch on November 4, 2026. If the app opens the wrong stream, force quit Paramount+ on Apple TV and retry. Courtside does not force quit apps automatically. This format-level test does not verify every game; `device_verified` and `autoplay_safe` remain false. Apple catalog endpoints are an undocumented public website interface and may change.

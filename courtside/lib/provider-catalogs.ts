@@ -1,13 +1,14 @@
+import {enrichParamount,paramountAppUrl} from './paramount.ts';
 import {isFoxWebUrl} from './fox.ts';
 import type {Game,WatchLink} from './catalog.ts';
 
 const cache=new Map<string,{at:number,text:string}>();
 const pending=new Map<string,Promise<string>>();
-export async function catalogHtml(url:string):Promise<string>{
+export async function catalogHtml(url:string,accept='text/html'):Promise<string>{
  const old=cache.get(url);if(old&&Date.now()-old.at<300000)return old.text;
  if(pending.has(url))return pending.get(url)!;
  const job=(async()=>{
-  const r=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(10000),headers:{Accept:'text/html','Accept-Language':'en-US'}});
+  const r=await fetch(url,{redirect:'error',signal:AbortSignal.timeout(10000),headers:{Accept:accept,'Accept-Language':'en-US'}});
   if(!r.ok)throw new Error(`Catalog returned ${r.status}`);
   const reader=r.body?.getReader();if(!reader)throw new Error('Empty catalog');
   const chunks:Uint8Array[]=[];let size=0;
@@ -104,7 +105,10 @@ export async function enrichProviderCatalogs(games:Game[]){
  await Promise.all(jobs.map(async job=>{
   try{const text=await catalogHtml(job.url);for(const g of job.games){const links=job.parse(text,g,job.url);if(links.length)g.links=[...links,...g.links.filter(l=>l.service!==job.service||l.kind==='event')];}if(statuses[job.service]!==false)statuses[job.service]=true;}
   catch{statuses[job.service]=false;}
- }));return statuses;
+ }));
+ const native=await enrichParamount(active,url=>catalogHtml(url,new URL(url).hostname==='uts-api.itunes.apple.com'?'application/json':'text/html'));
+ if(native!==null)statuses.paramount=statuses.paramount===false?false:native;
+ return statuses;
 }
 // Shared by the resolver and the Home Assistant handoff, including saved links.
 export function peacockAppUrl(url:string):string{
@@ -124,6 +128,7 @@ export function appleTvUrl(link:WatchLink):string|null{
   const web=new URL(link.url);
   if(isFoxWebUrl(link.url))return null;
   if(web.hostname==='cbssports.com'||web.hostname.endsWith('.cbssports.com'))return null;
+  if(link.service==='paramount')return paramountAppUrl(link.appUrl||link.url);
   if(link.service==='peacock')return peacockAppUrl(link.url);
   if(['prime','prime-hhn'].includes(link.service)){
    const app=new URL(link.appUrl||link.url);

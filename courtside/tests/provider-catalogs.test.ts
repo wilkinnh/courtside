@@ -4,7 +4,7 @@ import {peacockLinks,paramountLinks,appleTvCandidate,appleTvUrl,titleMatches} fr
 import {primeCards,matchPrimeDetail} from '../lib/prime.ts';
 import {safeUrl} from '../lib/sports.ts';
 import type {Game} from '../lib/catalog.ts';
-const game={id:'401879245',league:'epl',date:'2026-10-31T15:00Z',state:'pre',teams:[{name:'Manchester City',homeAway:'home'},{name:'Brighton & Hove Albion',homeAway:'away'}],links:[]} as Game;
+const game={name:'Manchester City vs Brighton',detail:'Scheduled',venue:'',broadcasts:[],eventUrl:'',id:'401879245',league:'epl',date:'2026-10-31T15:00Z',state:'pre',teams:[{id:'1',abbreviation:'MNC',logo:'',score:'0',record:'',name:'Manchester City',homeAway:'home'},{id:'2',abbreviation:'BHA',logo:'',score:'0',record:'',name:'Brighton & Hove Albion',homeAway:'away'}],links:[]} as Game;
 const item={type:'ASSET/SLE',title:'Man City v. Brighton',url:'/sports/man-city-v.-brighton/c5ecbfcb-c0b1-3383-9214-1e255f90d745',eventDetails:{eventStage:'UPCOMING',eventDisplayStartDate:Date.parse('2026-10-31T14:50Z')}};
 const html=(items:any[])=>`<script id="__NEXT_DATA__" type="application/json">${JSON.stringify({watchEndpoint:{base:'/watch/asset'},items})}</script>`;
 test('Peacock resolves both teams, time and provider-configured watch prefix',()=>{const links=peacockLinks(html([item]),game,'https://www.peacocktv.com/sports/premier-league');assert.equal(links.length,1);assert.equal(links[0].url,'https://www.peacocktv.com/watch/asset'+item.url);assert.equal(links[0].deviceVerified,false);assert.equal(appleTvCandidate(links[0]),true)});
