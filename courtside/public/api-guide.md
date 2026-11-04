@@ -118,7 +118,7 @@ Apple TV fallback: use Home Assistant `media_player.select_source` with the exac
 
 ### Paramount+ Apple TV event links
 
-For active Champions League, Serie A, and Carabao Cup games listed on Paramount+, Courtside searches Apple's US sports catalog and matches both teams, home/away, competition, and kickoff. A unique English live Paramount+ playable supplies the event UUID. No match or ambiguous feeds leave the native event link unavailable. Catalog coverage and team aliases may limit matches.
+Any active game in a configured Courtside league that lists Paramount+ triggers discovery in Apple's US sports catalog. There is no team allowlist or hard-coded Paramount competition route. The resolver uses catalog-supplied full/short team names, home/away, league, and kickoff to identify the event. If an opponent's name differs across languages, one exact team plus exact venue and kickoff is required. The unique English live Paramount+ playable supplies both the route and UUID; its display title is not used to infer identity. Missing or ambiguous catalog entries leave the native link unavailable. Finished-game replay discovery remains separate and unsupported.
 
 `watch_url` remains HTTPS. `apple_tv_url` and the website's player handoff use `pplus://www.paramountplus.com/live-tv/stream/<competition>/<event UUID>/`, with a trailing slash and no referral parameters. The Home Assistant endpoint accepts this narrowly validated native route only for provider `paramount`, and also converts matching Paramount HTTPS event URLs. Saved browser event overrides can use the HTTPS route; arbitrary custom schemes remain disallowed.
 

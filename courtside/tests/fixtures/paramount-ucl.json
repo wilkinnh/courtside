@@ -1,0 +1,530 @@
+[
+  {
+    "espnNames": [
+      "Como",
+      "Lens"
+    ],
+    "data": {
+      "content": {
+        "id": "umc.cse.1rp4wybden2dlgim67by867q0",
+        "title": "RC Lens vs. Como 1907",
+        "leagueName": "UEFA Champions League",
+        "eventTime": {
+          "gameKickOffStartTime": 1793822400000,
+          "liveBadgeTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "tuneInTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          }
+        },
+        "competitors": [
+          {
+            "name": "RC Lens",
+            "shortName": "Lens",
+            "isHome": true
+          },
+          {
+            "name": "Como 1907",
+            "shortName": "Como",
+            "isHome": false
+          }
+        ]
+      },
+      "channels": {
+        "tvs.sbd.10120": {
+          "name": "Paramount+",
+          "appBundleIds": [
+            "com.cbsvideo.app"
+          ]
+        }
+      },
+      "playables": [
+        {
+          "title": "Lens vs. Como",
+          "channelId": "tvs.sbd.10120",
+          "canonicalId": "umc.cse.1rp4wybden2dlgim67by867q0",
+          "airingType": "Live",
+          "eventTime": {
+            "gameKickOffStartTime": 1793822400000,
+            "liveBadgeTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            },
+            "playerInfoDisplayTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "playerInfoTransportBarTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "tuneInTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            }
+          },
+          "punchoutUrls": {
+            "open": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/e4f69494-bbff-48dc-b182-89967796a078?searchReferral=appleatv&source=spotlight#open",
+            "play": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/e4f69494-bbff-48dc-b182-89967796a078?searchReferral=appleatv&source=spotlight"
+          },
+          "externalId": "e4f69494-bbff-48dc-b182-89967796a078",
+          "primaryLocale": {
+            "displayName": "English (United States)",
+            "locale": "en_US"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "espnNames": [
+      "Real Betis",
+      "Borussia Dortmund"
+    ],
+    "data": {
+      "content": {
+        "id": "umc.cse.26riil5qa1t0j57jhl2g9tx5d",
+        "title": "Borussia Dortmund vs. Real Betis Balompi\u00e9",
+        "leagueName": "UEFA Champions League",
+        "eventTime": {
+          "gameKickOffStartTime": 1793822400000,
+          "liveBadgeTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "tuneInTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          }
+        },
+        "competitors": [
+          {
+            "name": "Borussia Dortmund",
+            "shortName": "Dortmund",
+            "isHome": true
+          },
+          {
+            "name": "Real Betis Balompi\u00e9",
+            "shortName": "Real Betis",
+            "isHome": false
+          }
+        ]
+      },
+      "channels": {
+        "tvs.sbd.10120": {
+          "name": "Paramount+",
+          "appBundleIds": [
+            "com.cbsvideo.app"
+          ]
+        }
+      },
+      "playables": [
+        {
+          "title": "Dortmund vs. Real Betis",
+          "channelId": "tvs.sbd.10120",
+          "canonicalId": "umc.cse.26riil5qa1t0j57jhl2g9tx5d",
+          "airingType": "Live",
+          "eventTime": {
+            "gameKickOffStartTime": 1793822400000,
+            "liveBadgeTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            },
+            "playerInfoDisplayTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "playerInfoTransportBarTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "tuneInTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            }
+          },
+          "punchoutUrls": {
+            "open": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/c317182a-c809-4547-aaa5-cf45ea8036fb?searchReferral=appleatv&source=spotlight#open",
+            "play": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/c317182a-c809-4547-aaa5-cf45ea8036fb?searchReferral=appleatv&source=spotlight"
+          },
+          "externalId": "c317182a-c809-4547-aaa5-cf45ea8036fb",
+          "primaryLocale": {
+            "displayName": "English (United States)",
+            "locale": "en_US"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "espnNames": [
+      "Sabah FK",
+      "Viking FK"
+    ],
+    "data": {
+      "content": {
+        "id": "umc.cse.5ziqypa2y562x3dowr2mvqd75",
+        "title": "Viking FK vs. Sabah FC",
+        "leagueName": "UEFA Champions League",
+        "eventTime": {
+          "gameKickOffStartTime": 1793822400000,
+          "liveBadgeTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "tuneInTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          }
+        },
+        "competitors": [
+          {
+            "name": "Viking FK",
+            "shortName": "Viking",
+            "isHome": true
+          },
+          {
+            "name": "Sabah FC",
+            "shortName": "Sabah",
+            "isHome": false
+          }
+        ]
+      },
+      "channels": {
+        "tvs.sbd.10120": {
+          "name": "Paramount+",
+          "appBundleIds": [
+            "com.cbsvideo.app"
+          ]
+        }
+      },
+      "playables": [
+        {
+          "title": "Viking vs. Sabah",
+          "channelId": "tvs.sbd.10120",
+          "canonicalId": "umc.cse.5ziqypa2y562x3dowr2mvqd75",
+          "airingType": "Live",
+          "eventTime": {
+            "gameKickOffStartTime": 1793822400000,
+            "liveBadgeTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            },
+            "playerInfoDisplayTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "playerInfoTransportBarTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "tuneInTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            }
+          },
+          "punchoutUrls": {
+            "open": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/7cd4d7f8-c8cc-4210-9ee4-30e03559abed?searchReferral=appleatv&source=spotlight#open",
+            "play": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/7cd4d7f8-c8cc-4210-9ee4-30e03559abed?searchReferral=appleatv&source=spotlight"
+          },
+          "externalId": "7cd4d7f8-c8cc-4210-9ee4-30e03559abed",
+          "primaryLocale": {
+            "displayName": "English (United States)",
+            "locale": "en_US"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "espnNames": [
+      "Club Brugge",
+      "PSV Eindhoven"
+    ],
+    "data": {
+      "content": {
+        "id": "umc.cse.yuiug3dujbst1nclwa0u36yd",
+        "title": "PSV Eindhoven vs. Club Brugge KV",
+        "leagueName": "UEFA Champions League",
+        "eventTime": {
+          "gameKickOffStartTime": 1793822400000,
+          "liveBadgeTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "tuneInTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          }
+        },
+        "competitors": [
+          {
+            "name": "PSV Eindhoven",
+            "shortName": "PSV",
+            "isHome": true
+          },
+          {
+            "name": "Club Brugge KV",
+            "shortName": "Club Brugge",
+            "isHome": false
+          }
+        ]
+      },
+      "channels": {
+        "tvs.sbd.10120": {
+          "name": "Paramount+",
+          "appBundleIds": [
+            "com.cbsvideo.app"
+          ]
+        }
+      },
+      "playables": [
+        {
+          "title": "PSV vs. Club Brugge",
+          "channelId": "tvs.sbd.10120",
+          "canonicalId": "umc.cse.yuiug3dujbst1nclwa0u36yd",
+          "airingType": "Live",
+          "eventTime": {
+            "gameKickOffStartTime": 1793822400000,
+            "liveBadgeTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            },
+            "playerInfoDisplayTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "playerInfoTransportBarTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "tuneInTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            }
+          },
+          "punchoutUrls": {
+            "open": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/20013908-ef8e-4254-9aef-cbef218d5246?searchReferral=appleatv&source=spotlight#open",
+            "play": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/20013908-ef8e-4254-9aef-cbef218d5246?searchReferral=appleatv&source=spotlight"
+          },
+          "externalId": "20013908-ef8e-4254-9aef-cbef218d5246",
+          "primaryLocale": {
+            "displayName": "English (United States)",
+            "locale": "en_US"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "espnNames": [
+      "Napoli",
+      "FC Porto"
+    ],
+    "data": {
+      "content": {
+        "id": "umc.cse.3tjpd4ydruvdfcsmhoc5i3k44",
+        "title": "FC Porto vs. SSC Napoli",
+        "leagueName": "UEFA Champions League",
+        "eventTime": {
+          "gameKickOffStartTime": 1793822400000,
+          "liveBadgeTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "tuneInTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          }
+        },
+        "competitors": [
+          {
+            "name": "FC Porto",
+            "shortName": "Porto",
+            "isHome": true
+          },
+          {
+            "name": "SSC Napoli",
+            "shortName": "Napoli",
+            "isHome": false
+          }
+        ]
+      },
+      "channels": {
+        "tvs.sbd.10120": {
+          "name": "Paramount+",
+          "appBundleIds": [
+            "com.cbsvideo.app"
+          ]
+        }
+      },
+      "playables": [
+        {
+          "title": "Porto vs. Napoli",
+          "channelId": "tvs.sbd.10120",
+          "canonicalId": "umc.cse.3tjpd4ydruvdfcsmhoc5i3k44",
+          "airingType": "Live",
+          "eventTime": {
+            "gameKickOffStartTime": 1793822400000,
+            "liveBadgeTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            },
+            "playerInfoDisplayTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "playerInfoTransportBarTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "tuneInTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            }
+          },
+          "punchoutUrls": {
+            "open": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/a3fdfb8d-58ad-4657-b680-167b3aac229c?searchReferral=appleatv&source=spotlight#open",
+            "play": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/a3fdfb8d-58ad-4657-b680-167b3aac229c?searchReferral=appleatv&source=spotlight"
+          },
+          "externalId": "a3fdfb8d-58ad-4657-b680-167b3aac229c",
+          "primaryLocale": {
+            "displayName": "English (United States)",
+            "locale": "en_US"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "espnNames": [
+      "Manchester City",
+      "RB Leipzig"
+    ],
+    "data": {
+      "content": {
+        "id": "umc.cse.1razouuetif0hy48onhzyh6mk",
+        "title": "RB Leipzig vs. Manchester City",
+        "leagueName": "UEFA Champions League",
+        "eventTime": {
+          "gameKickOffStartTime": 1793822400000,
+          "liveBadgeTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793833200000,
+            "startTime": 1793822400000
+          },
+          "tuneInTime": {
+            "endTime": 1793838900000,
+            "startTime": 1793822400000
+          }
+        },
+        "competitors": [
+          {
+            "name": "RB Leipzig",
+            "shortName": "RB Leipzig",
+            "isHome": true
+          },
+          {
+            "name": "Manchester City",
+            "shortName": "Man City",
+            "isHome": false
+          }
+        ]
+      },
+      "channels": {
+        "tvs.sbd.10120": {
+          "name": "Paramount+",
+          "appBundleIds": [
+            "com.cbsvideo.app"
+          ]
+        }
+      },
+      "playables": [
+        {
+          "title": "RB Leipzig vs. Man. City",
+          "channelId": "tvs.sbd.10120",
+          "canonicalId": "umc.cse.1razouuetif0hy48onhzyh6mk",
+          "airingType": "Live",
+          "eventTime": {
+            "gameKickOffStartTime": 1793822400000,
+            "liveBadgeTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            },
+            "playerInfoDisplayTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "playerInfoTransportBarTime": {
+              "endTime": 1793833200000,
+              "startTime": 1793822400000
+            },
+            "tuneInTime": {
+              "endTime": 1793838900000,
+              "startTime": 1793822400000
+            }
+          },
+          "punchoutUrls": {
+            "open": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/da4a1e1a-9417-4cc3-bb5e-66af066fdda9?searchReferral=appleatv&source=spotlight#open",
+            "play": "pplus://www.paramountplus.com/live-tv/stream/uefa-champions-league/da4a1e1a-9417-4cc3-bb5e-66af066fdda9?searchReferral=appleatv&source=spotlight"
+          },
+          "externalId": "da4a1e1a-9417-4cc3-bb5e-66af066fdda9",
+          "primaryLocale": {
+            "displayName": "English (United States)",
+            "locale": "en_US"
+          }
+        }
+      ]
+    }
+  }
+]
