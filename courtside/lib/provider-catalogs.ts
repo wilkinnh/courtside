@@ -1,3 +1,4 @@
+import {enrichMax,maxAppUrl} from './max.ts';
 import {enrichParamount,paramountAppUrl} from './paramount.ts';
 import {isFoxWebUrl} from './fox.ts';
 import type {Game,WatchLink} from './catalog.ts';
@@ -97,7 +98,7 @@ export function usaLinks(text:string,g:Game,sourceUrl:string):WatchLink[]{
  });return unambiguous(links);
 }
 export async function enrichProviderCatalogs(games:Game[]){
- const active=games.filter(g=>g.state!=='post');const statuses:Record<string,boolean|null>={peacock:null,paramount:null,usa:null};
+ const active=games.filter(g=>g.state!=='post');const statuses:Record<string,boolean|null>={peacock:null,paramount:null,usa:null,max:null};
  const jobs:{service:string;url:string;games:Game[];parse:typeof peacockLinks}[]=[];
  for(const [league,pages] of Object.entries(peacockPages))if(active.some(g=>g.league===league))for(const page of pages)jobs.push({service:'peacock',url:`https://www.peacocktv.com/sports/${page}`,games:active.filter(g=>g.league===league),parse:peacockLinks});
  for(const [league,cfg] of Object.entries(cbsPages))if(active.some(g=>g.league===league))jobs.push({service:'paramount',url:`https://www.cbssports.com/watch/${cfg.slug}`,games:active.filter(g=>g.league===league),parse:paramountLinks});
@@ -108,6 +109,7 @@ export async function enrichProviderCatalogs(games:Game[]){
  }));
  const native=await enrichParamount(active,url=>catalogHtml(url,new URL(url).hostname==='uts-api.itunes.apple.com'?'application/json':'text/html'));
  if(native!==null)statuses.paramount=statuses.paramount===false?false:native;
+ statuses.max=await enrichMax(active,url=>catalogHtml(url,new URL(url).hostname==='uts-api.itunes.apple.com'?'application/json':'text/html'));
  return statuses;
 }
 // Shared by the resolver and the Home Assistant handoff, including saved links.
@@ -128,6 +130,7 @@ export function appleTvUrl(link:WatchLink):string|null{
   const web=new URL(link.url);
   if(isFoxWebUrl(link.url))return null;
   if(web.hostname==='cbssports.com'||web.hostname.endsWith('.cbssports.com'))return null;
+  if(link.service==='max')return maxAppUrl(link.appUrl||link.url);
   if(link.service==='paramount')return paramountAppUrl(link.appUrl||link.url);
   if(link.service==='peacock')return peacockAppUrl(link.url);
   if(['prime','prime-hhn'].includes(link.service)){

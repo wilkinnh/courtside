@@ -169,3 +169,12 @@ Provider HTML fetches are bounded, cached for five minutes, deduplicated in flig
 A user reported that the Eagles vs. Commanders `/watch/asset/sports/...` URL launches Peacock without selecting the game. Courtside now retains that browser URL but converts validated Peacock sports asset paths for Apple TV to `/deeplink?deeplinkData=` with URL-encoded JSON containing the same UUID as `pvid`, `type: PROGRAMME`, and `action: PLAY`.
 
 This follows a [firsthand Apple TV test report](https://community.home-assistant.io/t/appletv-integration-deep-link-urls-which-are-working/592862/35). That report tested an episode, not this live sports event. Applying the format to sports is a candidate fix; live-event routing and playback still require a device test. `deviceVerified` and `autoplay_safe` remain false.
+
+### HBO Max NHL Apple TV links — November 4, 2026
+
+Supersedes the earlier missing-catalog-ID limitation. Apple's public sports search and event endpoint now supply HBO Max sport punchouts. The adapter searches NHL games listed on TNT/TBS/truTV/HBO Max and requires matching home/away teams, NHL competition, kickoff, canonical event ID, live airing, WBD US sports service and `com.wbd.stream` channel identity. TNT alone never establishes HBO Max availability: the matching Apple playable does. Multiple distinct matches are rejected.
+
+- [Blackhawks at Panthers](https://tv.apple.com/us/sporting-event/umc.cse.49l8i4km2xo1a7s3zshtcuc8p), November 4, 7:30 PM EST: `https://play.hbomax.com/sport/d07e2dc3-9c68-5019-9f99-481f39bebaf6?utm_source=generic_apple`
+- [Sharks at Kings](https://tv.apple.com/us/sporting-event/umc.cse.gagoveihyip83eovoi01a3wd), November 4, 10 PM EST: `https://play.hbomax.com/sport/bdaa2bf1-f2b1-5d2d-85f1-d00512903458?utm_source=generic_apple`
+
+Minimal public catalog evidence is saved alongside this document in `max-event-2026-11-04.json` and `max-sharks-event-2026-11-04.json`. These are actual provider punchouts, not guessed custom schemes. The same HTTPS link is sent to Home Assistant with media type `url`. Device playback is untested; `deviceVerified` and autoplay safety remain false. HBO Max Standard/Premium access and sign-in are still required. Enable the existing HBO Max service in My services; its stable ID remains `max`.

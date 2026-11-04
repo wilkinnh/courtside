@@ -1,0 +1,79 @@
+{
+  "data": {
+    "content": {
+      "id": "umc.cse.gagoveihyip83eovoi01a3wd",
+      "title": "San Jose Sharks at Los Angeles Kings",
+      "leagueName": "NHL",
+      "eventTime": {
+        "gameKickOffStartTime": 1793847600000,
+        "liveBadgeTime": {
+          "endTime": 1793864100000,
+          "startTime": 1793846400000
+        },
+        "playerInfoDisplayTime": {
+          "endTime": 1793857200000,
+          "startTime": 1793846400000
+        },
+        "playerInfoTransportBarTime": {
+          "endTime": 1793857200000,
+          "startTime": 1793846400000
+        },
+        "tuneInTime": {
+          "endTime": 1793864100000,
+          "startTime": 1793846400000
+        }
+      },
+      "competitors": [
+        {
+          "isHome": false,
+          "name": "San Jose Sharks"
+        },
+        {
+          "isHome": true,
+          "name": "Los Angeles Kings"
+        }
+      ]
+    },
+    "channels": {
+      "tvs.sbd.1000566": {
+        "name": "HBO Max",
+        "appBundleIds": [
+          "com.wbd.stream"
+        ]
+      }
+    },
+    "playables": {
+      "max": {
+        "channelId": "tvs.sbd.1000566",
+        "externalServiceId": "com.wbd.availability.US.sports",
+        "canonicalId": "umc.cse.gagoveihyip83eovoi01a3wd",
+        "airingType": "Live",
+        "title": "Sharks at Kings",
+        "eventTime": {
+          "gameKickOffStartTime": 1793847600000,
+          "liveBadgeTime": {
+            "endTime": 1793862300000,
+            "startTime": 1793847600000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793858400000,
+            "startTime": 1793847600000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793858400000,
+            "startTime": 1793847600000
+          },
+          "tuneInTime": {
+            "endTime": 1793862300000,
+            "startTime": 1793847600000
+          }
+        },
+        "externalId": "bdaa2bf1-f2b1-5d2d-85f1-d00512903458",
+        "punchoutUrls": {
+          "open": "https://play.hbomax.com/sport/bdaa2bf1-f2b1-5d2d-85f1-d00512903458?utm_source=generic_apple",
+          "play": "https://play.hbomax.com/sport/bdaa2bf1-f2b1-5d2d-85f1-d00512903458?utm_source=generic_apple"
+        }
+      }
+    }
+  }
+}

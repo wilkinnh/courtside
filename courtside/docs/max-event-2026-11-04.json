@@ -1,0 +1,79 @@
+{
+  "data": {
+    "content": {
+      "id": "umc.cse.49l8i4km2xo1a7s3zshtcuc8p",
+      "title": "Chicago Blackhawks at Florida Panthers",
+      "leagueName": "NHL",
+      "eventTime": {
+        "gameKickOffStartTime": 1793838600000,
+        "liveBadgeTime": {
+          "endTime": 1793849640000,
+          "startTime": 1793836200000
+        },
+        "playerInfoDisplayTime": {
+          "endTime": 1793847000000,
+          "startTime": 1793836200000
+        },
+        "playerInfoTransportBarTime": {
+          "endTime": 1793847000000,
+          "startTime": 1793836200000
+        },
+        "tuneInTime": {
+          "endTime": 1793849640000,
+          "startTime": 1793836200000
+        }
+      },
+      "competitors": [
+        {
+          "isHome": false,
+          "name": "Chicago Blackhawks"
+        },
+        {
+          "isHome": true,
+          "name": "Florida Panthers"
+        }
+      ]
+    },
+    "channels": {
+      "tvs.sbd.1000566": {
+        "name": "HBO Max",
+        "appBundleIds": [
+          "com.wbd.stream"
+        ]
+      }
+    },
+    "playables": {
+      "max": {
+        "channelId": "tvs.sbd.1000566",
+        "externalServiceId": "com.wbd.availability.US.sports",
+        "canonicalId": "umc.cse.49l8i4km2xo1a7s3zshtcuc8p",
+        "airingType": "Live",
+        "title": "Blackhawks at Panthers",
+        "eventTime": {
+          "gameKickOffStartTime": 1793838600000,
+          "liveBadgeTime": {
+            "endTime": 1793847840000,
+            "startTime": 1793836800000
+          },
+          "playerInfoDisplayTime": {
+            "endTime": 1793847600000,
+            "startTime": 1793836800000
+          },
+          "playerInfoTransportBarTime": {
+            "endTime": 1793847600000,
+            "startTime": 1793836800000
+          },
+          "tuneInTime": {
+            "endTime": 1793847840000,
+            "startTime": 1793836800000
+          }
+        },
+        "externalId": "d07e2dc3-9c68-5019-9f99-481f39bebaf6",
+        "punchoutUrls": {
+          "open": "https://play.hbomax.com/sport/d07e2dc3-9c68-5019-9f99-481f39bebaf6?utm_source=generic_apple",
+          "play": "https://play.hbomax.com/sport/d07e2dc3-9c68-5019-9f99-481f39bebaf6?utm_source=generic_apple"
+        }
+      }
+    }
+  }
+}
