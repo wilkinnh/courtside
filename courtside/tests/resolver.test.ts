@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {safeUrl,watchEntries,normalize,selectedLinks,api} from '../lib/sports.ts';
+import {safeUrl,extractLinks,watchEntries,normalize,selectedLinks,api} from '../lib/sports.ts';
 const stream={status:'live',name:'Main feed',source:{name:'ESPN',lang:'en'},authTypes:['mvpd'],packages:[],links:{web:'https://www.espn.com/watch/player?id=abc',appPlay:'sportscenter://x-callback-url/showWatchStream?playID=abc'}};
 const fixture=(overrides:any={})=>({page:{buckets:[{contents:[{eventId:401909884,status:'live',streams:[stream],...overrides}]}]}});
 test('catalog uses event ID join and preserves provider URL and device caveat',()=>{const links=watchEntries(fixture()).get('401909884')!;assert.equal(links[0].url,stream.links.web);assert.equal(links[0].kind,'event');assert.equal(links[0].appUrl,stream.links.appPlay);assert.equal(links[0].deviceVerified,false);assert.equal(links[0].service,'espn');});
@@ -14,3 +14,19 @@ test('unsupported leagues and invalid calendar dates fail without upstream fetch
 test('resolve rejects malformed request and unknown services',async()=>{for(const body of ['{',JSON.stringify({league:'nba',event_id:'401909884',services:['fake']}),JSON.stringify({league:'nba',event_id:'123',services:['espn']})]){const r=await api(new Request('http://localhost/api/v1/resolve',{method:'POST',body}));assert.equal(r.status,400)}});
 
  test('USA broadcast aliases match the USA Network preference',()=>{for(const name of ['USA Net','USA','USA Network']){const g=normalize({id:'401879248',competitions:[{broadcasts:[{names:[name]}],geoBroadcasts:[{region:'us',media:{shortName:'USA Net'}}]}]},'epl');assert.deepEqual(g.broadcasts,['USA Network']);}assert.ok(safeUrl('https://www.usanetwork.com/game/chelsea-v-manchester-united-1790785474190'));assert.equal(safeUrl('https://www.usanetwork.com.evil.example/game/test'),null);});
+
+test('FOX broadcasts resolve distinct live channels without relabeling them as events',()=>{
+ const g=normalize({id:'401909884',competitions:[{broadcasts:[{names:['FS1','fs2']}]}]},'ncaaf');
+ const links=selectedLinks(g,['fox']);
+ assert.deepEqual(links.map(l=>l.url),['https://www.foxsports.com/live/fs1','https://www.foxsports.com/live/fs2']);
+ assert.ok(links.every(l=>l.kind==='channel'&&l.deviceVerified===false));
+ const fallback=normalize({id:'401909884',competitions:[{broadcasts:[{names:['FOX']}]}]},'nfl');
+ assert.equal(selectedLinks(fallback,['fox'])[0].kind,'service');
+});
+
+test('FOX One provider program links are event links and retain their exact URL',()=>{
+ const url='https://www.fox.com/watch/epg/FS1-program-29126316_dtc/mls-portland-timbers-vs-houston-dynamo?page=1&size=15';
+ const [link]=extractLinks({links:[{rel:['watch'],href:url}]});
+ assert.equal(link.service,'fox');assert.equal(link.kind,'event');assert.equal(link.url,url);assert.equal(link.playbackTarget,'browser_only');
+ assert.equal(extractLinks({links:[{rel:['watch'],href:'https://www.fox.com/'}]})[0].kind,'service');
+});

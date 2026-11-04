@@ -1,3 +1,4 @@
+import {isFoxOneEventUrl,isFoxWebUrl} from './fox.ts';
 import {enrichProviderCatalogs,appleTvCandidate,appleTvUrl} from './provider-catalogs.ts';
 import {enrichPrime} from './prime.ts';
 import {leagues, services, type Game, type WatchLink} from './catalog.ts';
@@ -16,13 +17,17 @@ export function extractLinks(raw:any):WatchLink[]{
  const found:WatchLink[]=[];const walk=(v:any,depth:number)=>{if(!v||depth>9)return;if(Array.isArray(v)){v.forEach(x=>walk(x,depth+1));return;}if(typeof v!=='object')return;
  const url=safeUrl(v.href||v.url);const rel=Array.isArray(v.rel)?v.rel:[];
  if(url && (rel.includes('watch')|| /espn\.com\/watch\/player(?:\/|\?)/.test(url)) && !/highlight|replay/i.test(v.text||v.title||'')){
- const event=/\/watch\/player(?:\/|\?)|\/video\/detail\/|\/detail\/|\/watch\/playback\/|\/game\/|\/sports\/event\//.test(url);
- found.push({service:serviceFor(url),label:v.text||'Provider stream',url,kind:event?'event':'service',source:'ESPN event metadata',verifiedAt:new Date().toISOString(),access:'subscription_required'});}
+ const event=isFoxOneEventUrl(url)||/\/watch\/player(?:\/|\?)|\/video\/detail\/|\/detail\/|\/watch\/playback\/|\/game\/|\/sports\/event\//.test(url);
+ found.push({service:serviceFor(url),label:v.text||'Provider stream',url,kind:event?'event':'service',...(isFoxWebUrl(url)?{playbackTarget:'browser_only' as const}:{}),source:'ESPN event metadata',verifiedAt:new Date().toISOString(),access:'subscription_required'});}
  Object.values(v).forEach(x=>walk(x,depth+1));};walk(raw,0);return found.filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i);
 }
 export function normalize(e:any,league:string):Game{
  const c=e.competitions?.[0]||{};const broadcasts=[...new Set<string>([...(c.broadcasts||[]).flatMap((b:any)=>b.names||b.media?.map?.((m:any)=>m.shortName)||[b.media?.shortName].filter(Boolean)),...(c.geoBroadcasts||[]).filter((b:any)=>!b.region||b.region==='us').map((b:any)=>b.media?.shortName).filter(Boolean)].map((name:string)=>/^(usa|usa net|usa network)$/i.test(name.trim())?'USA Network':name))];
  const links=extractLinks({links:e.links,broadcasts:c.geoBroadcasts});
+ for(const feed of ['FS1','FS2'])if(broadcasts.some(b=>b.trim().toUpperCase()===feed)){
+  const url=`https://www.foxsports.com/live/${feed.toLowerCase()}`;
+  if(!links.some(l=>l.url===url))links.push({service:'fox',label:`${feed} live`,feed,url,kind:'channel',playbackTarget:'browser_only',source:'Broadcast name match · FOX Sports live channel',verifiedAt:new Date().toISOString(),access:'subscription_required',deviceVerified:false});
+ }
  for(const s of services)if(broadcasts.some(b=>s.channels.some(n=>n.toLowerCase()===b.toLowerCase()))&&!links.some(l=>l.service===s.id))links.push({service:s.id,label:s.name,url:s.url,kind:'service',source:'Broadcast name match',verifiedAt:new Date().toISOString(),access:'subscription_required'});
  return {id:String(e.id),league,name:e.name||(c.competitors||[]).slice().sort((a:any,b:any)=>a.homeAway==='away'?-1:1).map((t:any)=>t.team?.displayName||'TBD').join(' at '),date:e.date||c.date,state:e.status?.type?.state||c.status?.type?.state||'pre',detail:e.status?.type?.shortDetail||c.status?.type?.shortDetail||'Scheduled',venue:c.venue?.fullName||'',teams:(c.competitors||[]).map((t:any)=>({id:String(t.team?.id||t.id),name:t.team?.displayName||t.athlete?.displayName||'TBD',shortName:t.team?.shortDisplayName,abbreviation:t.team?.abbreviation||'TBD',logo:t.team?.logo||t.team?.logos?.[0]?.href||'',score:t.score||'0',homeAway:t.homeAway,record:t.records?.find((r:any)=>r.type==='total')?.summary||''})).sort((a:any,b:any)=>a.homeAway==='away'?-1:1),broadcasts,links,eventUrl:safeUrl(e.links?.find((l:any)=>l.rel?.includes('summary'))?.href)||''};
 }
@@ -68,11 +73,11 @@ export async function resolveGame(league:string,id:string,selected:string[],over
  event.broadcasts=[...new Set([...event.broadcasts,...actual.map(x=>x.feed).filter((v):v is string=>!!v)])];
  event.links=[...actual,...event.links].filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i);
  const [prime_catalog_available,provider_catalogs]=await Promise.all([enrichPrime([event]),enrichProviderCatalogs([event])]);
- for(const o of overrides){const url=safeUrl(o.url);if(url&&o.event_id===id&&o.league===league&&services.some(s=>s.id===o.service))event.links.unshift({service:o.service,label:'Your saved event link',url,kind:'event',source:'User-supplied; playback not verified',verifiedAt:new Date().toISOString(),access:'subscription_required'});}
+ for(const o of overrides){const url=safeUrl(o.url);if(url&&o.event_id===id&&o.league===league&&services.some(s=>s.id===o.service))event.links.unshift({service:o.service,label:'Your saved event link',url,kind:'event',...(isFoxWebUrl(url)?{playbackTarget:'browser_only' as const}:{}),source:'User-supplied; playback not verified',verifiedAt:new Date().toISOString(),access:'subscription_required'});}
  const options=selectedLinks(event,selected).sort((a,b)=>Number(b.kind==='event')-Number(a.kind==='event'));
- const best=options.find(o=>o.kind==='event'&&o.language==='en')||options.find(o=>o.kind==='event')||null;
+ const best=options.find(o=>o.kind==='event'&&o.language==='en')||options.find(o=>o.kind==='event')||options.find(o=>o.kind==='channel')||null;
  const appleBest=options.find(o=>appleTvCandidate(o)&&o.language==='en')||options.find(appleTvCandidate)||null;
- return {event,options,provider_catalogs,apple_tv_url:appleBest?appleTvUrl(appleBest):null,prime_catalog_available,link_catalog_available:!!catalog,device_verified:false,watch_url:best?.url||null,link_kind:best?.kind||null,autoplay_safe:false,launchable:!!appleBest,reason:best?'Event page found. Device app support, sign-in, entitlement and blackouts still apply.':'No event-specific watch URL found for your selected services. Service pages are excluded from watch_url.',resolved_at:new Date().toISOString()};
+ return {event,options,provider_catalogs,apple_tv_url:appleBest?appleTvUrl(appleBest):null,prime_catalog_available,link_catalog_available:!!catalog,device_verified:false,watch_url:best?.url||null,link_kind:best?.kind||null,autoplay_safe:false,launchable:!!appleBest,reason:best?.kind==='channel'?'Browser live channel found. Opens current programming; FOX Sports web URLs are not supported for Apple TV handoff.':best?'Event page found. Device app support, sign-in, entitlement and blackouts still apply.':'No event-specific watch URL found for your selected services. Service pages are excluded from watch_url.',resolved_at:new Date().toISOString()};
 }
 export function today(){return new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());}
 export async function api(request:Request):Promise<Response>{

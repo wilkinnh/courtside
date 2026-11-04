@@ -1,3 +1,4 @@
+import {isFoxWebUrl} from './fox.ts';
 import type {Game,WatchLink} from './catalog.ts';
 
 const cache=new Map<string,{at:number,text:string}>();
@@ -117,9 +118,11 @@ export function peacockAppUrl(url:string):string{
  return url;
 }
 export function appleTvUrl(link:WatchLink):string|null{
- if(link.kind!=='event'||link.playbackTarget==='browser_only')return null;
+ if(link.playbackTarget==='browser_only')return null;
+ if(link.kind!=='event')return null;
  try{
   const web=new URL(link.url);
+  if(isFoxWebUrl(link.url))return null;
   if(web.hostname==='cbssports.com'||web.hostname.endsWith('.cbssports.com'))return null;
   if(link.service==='peacock')return peacockAppUrl(link.url);
   if(['prime','prime-hhn'].includes(link.service)){

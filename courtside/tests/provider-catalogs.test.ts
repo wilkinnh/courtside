@@ -30,3 +30,16 @@ test('Peacock Apple TV handoff sends the exact sports asset as an encoded playba
  assert.equal(appleTvUrl({...link,playbackTarget:'browser_only'}),null);
  for(const other of [url.replace('www.peacocktv.com','www.peacocktv.com.evil.example'),url.replace('179340d1-fca6-3d44-b69a-a0db822d82ef','bad-id'),url.replace('/sports/','/movies/')])assert.equal(appleTvUrl({...link,url:other}),other);
 });
+
+test('FOX Sports web links are excluded from Apple TV handoff',()=>{
+ const link:any={service:'fox',kind:'channel',url:'https://www.foxsports.com/live/fs1'};
+ assert.equal(appleTvUrl(link),null);
+ assert.equal(appleTvUrl({...link,kind:'event'}),null);
+ for(const url of ['https://www.foxsports.com/live','https://www.foxsports.com/live/fox','https://www.foxsports.com.evil.example/live/fs1'])assert.equal(appleTvUrl({...link,url}),null);
+ assert.equal(appleTvUrl({...link,kind:'service'}),null);
+});
+
+test('FOX One saved program URL is excluded from Apple TV handoff',()=>{
+ const url='https://www.fox.com/watch/epg/FS1-program-29126316_dtc/mls-portland-timbers-vs-houston-dynamo?page=1&size=15';
+ assert.equal(appleTvUrl({service:'fox',kind:'event',url} as any),null);
+});

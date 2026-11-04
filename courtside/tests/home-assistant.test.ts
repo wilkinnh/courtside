@@ -12,6 +12,10 @@ test('HA discovery, script variables and failures',async()=>{
   const discovered=await homeAssistantApi(request(),config);assert.deepEqual(await discovered.json(),{players:[{entity_id:'media_player.tv',name:'TV',state:'idle'}]});
   assert.equal(calls[0].options.headers.Authorization,'Bearer private-token');
   for(const mode of ['live','beginning']){assert.equal((await homeAssistantApi(request('play',{...payload,start_mode:mode}),config)).status,202);assert.deepEqual(JSON.parse(calls.at(-1)!.options.body),{entity_id:'script.courtside_play',variables:{...payload,start_mode:mode}});assert.equal(calls.at(-1)!.url,'http://ha.local:8123/api/services/script/turn_on');}
+  const foxOne={...payload,provider:'fox',media_url:'https://www.fox.com/watch/epg/FS1-program-29126316_dtc/mls-portland-timbers-vs-houston-dynamo?page=1&size=15'};
+  const beforeFox=calls.length;
+  assert.equal((await homeAssistantApi(request('play',foxOne),config)).status,422);
+  assert.equal(calls.length,beforeFox);
   const peacockWeb='https://www.peacocktv.com/watch/asset/sports/eagles-vs.-commanders/179340d1-fca6-3d44-b69a-a0db822d82ef';
   const peacockApp='https://www.peacocktv.com/deeplink?deeplinkData='+encodeURIComponent(JSON.stringify({pvid:'179340d1-fca6-3d44-b69a-a0db822d82ef',type:'PROGRAMME',action:'PLAY'}));
   // Exercise the website's raw URL request through the actual HA script boundary.
@@ -22,6 +26,9 @@ test('HA discovery, script variables and failures',async()=>{
   }
   for(const change of [{media_url:'javascript:bad'},{provider:'bad'},{start_mode:'bad'},{media_player:'sensor.tv'}])assert.equal((await homeAssistantApi(request('play',{...payload,...change}),config)).status,400);
   calls.length=0;
+  const fox=await homeAssistantApi(request('play',{...payload,provider:'fox',media_url:'https://www.foxsports.com/live/fs1'}),config);
+  assert.equal(fox.status,422);assert.equal(calls.length,0);assert.match((await fox.json()).error,/FOX One/);
+
   globalThis.fetch=async(input,options)=>{calls.push({url:String(input),options});return String(input).endsWith('/states/script.courtside_play')?new Response('{}',{status:404}):Response.json({state:'idle'});};
   const missing=await homeAssistantApi(request('play',payload),config);assert.equal(missing.status,502);assert.match((await missing.json()).error,/script.courtside_play was not found/);assert.equal(calls.some(c=>c.options.method==='POST'),false);
   globalThis.fetch=async(input)=>Response.json({state:String(input).includes('/states/script.')?'unavailable':'idle'});

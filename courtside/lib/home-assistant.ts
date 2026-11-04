@@ -1,3 +1,4 @@
+import {isFoxWebUrl} from './fox.ts';
 import {services} from './catalog.ts';
 import {peacockAppUrl} from './provider-catalogs.ts';
 import {safeUrl} from './sports.ts';
@@ -25,6 +26,7 @@ export async function homeAssistantApi(request:Request,config?:HomeAssistantConf
   }
   let data:any;try{data=await request.json();}catch{return json(400,{error:'Invalid JSON'});}
   if(!data||typeof data.media_player!=='string'||!/^media_player\.[a-z0-9_]+$/.test(data.media_player)||!services.some(s=>s.id===data.provider)||!['live','beginning'].includes(data.start_mode)||typeof data.media_url!=='string'||data.media_url.length>4096||!(safeUrl(data.media_url)||(['espn','espn-plus'].includes(data.provider)&&/^sportscenter:\/\/x-callback-url\/showWatchStream\?playID=[a-zA-Z0-9-]+$/.test(data.media_url))))return json(400,{error:'Provide a media player, supported provider URL, provider and live/beginning start mode.'});
+  if(isFoxWebUrl(data.media_url))return json(422,{error:'FOX Sports and FOX One web URLs are unavailable for Apple TV handoff. Open FOX One on the TV and select the channel manually; a supported FOX One app link is needed for direct playback.'});
   const mediaUrl=data.provider==='peacock'?peacockAppUrl(data.media_url):data.media_url;
   stage='checking the selected player';
   const player=await call('states/'+data.media_player);
