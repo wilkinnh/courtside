@@ -1,6 +1,6 @@
 # Courtside API v1
 
-The website loads real ESPN schedules; it does not ship simulated games. Browser preferences are saved locally and must be passed explicitly to API requests. US broadcast matching is a convenience, not an entitlement check.
+The website loads real ESPN schedules; it does not ship simulated games. Preferences are stored on the Courtside server and shared across devices. Resolver requests must still pass service preferences explicitly. US broadcast matching is a convenience, not an entitlement check.
 
 ## Docker and local Node hosting
 
@@ -21,7 +21,7 @@ npm run build:local
 npm start
 ```
 
-Node defaults to loopback; set `HOST=0.0.0.0` for LAN access. PORT defaults to 8788. Browser preferences are stored on each device, not in a container volume.
+Node defaults to loopback; set `HOST=0.0.0.0` for LAN access. PORT defaults to 8788. Preferences are stored in `data/preferences.json` for Node (`COURTSIDE_DATA_DIR` overrides the directory) and in the persistent `courtside-data` Docker volume.
 
 Optional authentication: configure `COURTSIDE_API_KEY` with at least 24 characters. API requests then require an `Authorization: Bearer ...` header, except the non-sensitive health check. Enter the key in website Preferences → Local server access; it is kept only in session storage. In Home Assistant, put the header in secrets.yaml. If no key is set, omit the example authorization header.
 
@@ -123,3 +123,7 @@ Any active game in a configured Courtside league that lists Paramount+ triggers 
 `watch_url` remains HTTPS. `apple_tv_url` and the website's player handoff use `pplus://www.paramountplus.com/live-tv/stream/<competition>/<event UUID>/`, with a trailing slash and no referral parameters. The Home Assistant endpoint accepts this narrowly validated native route only for provider `paramount`, and also converts matching Paramount HTTPS event URLs. Saved browser event overrides can use the HTTPS route; arbitrary custom schemes remain disallowed.
 
 The user verified Arsenal playback from a fresh Paramount+ launch on November 4, 2026. If the app opens the wrong stream, force quit Paramount+ on Apple TV and retry. Courtside does not force quit apps automatically. This format-level test does not verify every game; `device_verified` and `autoplay_safe` remain false. Apple catalog endpoints are an undocumented public website interface and may change.
+
+## Shared household preferences
+
+`GET /api/v1/preferences` returns `{ "preferences": null }` before migration, or the shared preferences object. `POST /api/v1/preferences` initializes the profile with a complete object only when absent; later POSTs return the existing profile. `PATCH /api/v1/preferences` saves only supplied fields, preserving other settings. Supported fields: `hhnSetup`, `hiddenSports`, `services`, `channels`, `favorites`, `hideScores`, `onlyMine`, `overrides`. Writes require `Content-Type: application/json` and the configured API key, just like other protected endpoints. Credentials are never part of the shared profile. Responses are not cached. One Node server process owns this file; do not share it between multiple server processes.

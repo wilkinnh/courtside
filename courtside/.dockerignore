@@ -17,3 +17,6 @@ work
 .DS_Store
 
 .local
+
+# Shared household preferences
+/data/

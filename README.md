@@ -60,7 +60,7 @@ HOST=0.0.0.0 npm start
 
 `PORT` defaults to 8788. `ASSET_DIRECTORY` defaults to `dist-local`. Both the frontend and `/api/v1/*` run on the same server. `npm run api` is an alias for the same Node server.
 
-The Docker image builds browser assets in one stage and runs a non-root Node process in the second. Runtime needs no npm packages, database, Cloudflare process, or hosting credentials. Compose uses a read-only filesystem. Preferences, services, saved games and overrides are stored per browser, so no container data volume is needed. Upstream metadata cache is in memory and resets on restart. Home Assistant requests must supply their own service preferences.
+The Docker image builds browser assets in one stage and runs a non-root Node process in the second. Runtime needs no npm packages, database, Cloudflare process, or hosting credentials. Preferences, services, watchlist and saved links are shared across devices using this server. Node stores them in `courtside/data/preferences.json` by default (`COURTSIDE_DATA_DIR` can override the directory). Docker uses the persistent `courtside-data` volume at `/app/data`; the rest of its filesystem stays read-only. Back up this file or volume; removing the volume deletes the shared profile. Upstream metadata cache is in memory and resets on restart. Home Assistant requests must supply their own service preferences.
 
 The server needs outbound HTTPS access to ESPN for schedules and watch catalogs. Browsers load provider logos and Google Fonts from the internet. Watching still requires your provider subscription, login and compatible app; local hosting does not remove blackouts.
 
@@ -73,7 +73,7 @@ After rebuilding and restarting your server, open `http://YOUR_SERVER_LAN_IP:878
 - **iPhone:** Safari → Share → Add to Home Screen → Add. Enable Open as Web App if offered.
 - **Android:** Chrome → menu → Add to Home screen (or Install app, if offered).
 
-Use the server’s network address, not `localhost`. Keep the server running; schedules and watch links need a network connection. Full app installation depends on browser support and generally requires HTTPS; a home-screen shortcut can still be used with your LAN server. Preferences are saved on each device/browser, so set up your services in the home-screen app after adding it.
+Use the server’s network address, not `localhost`. Keep the server running; schedules and watch links need a network connection. Full app installation depends on browser support and generally requires HTTPS; a home-screen shortcut can still be used with your LAN server. Preferences are shared with every device connecting to the same server. On the first connection after upgrading, the server imports that browser’s existing preferences; open the browser with your preferred lineup first. Later devices use the server profile. Changes sync automatically within about five seconds, and when the app regains focus. The API access key remains specific to each browser session. Preferences shows whether changes have reached the server; leave the app open until it says “Saved across devices.” Simultaneous edits to different settings are merged; the last save wins if two devices change the same setting.
 
 ## Home Assistant / Apple TV
 

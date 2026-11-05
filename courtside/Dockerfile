@@ -13,6 +13,7 @@ ENV NODE_ENV=production HOST=0.0.0.0 PORT=8788 ASSET_DIRECTORY=/app/dist-local
 COPY --from=build --chown=node:node /app/dist-local ./dist-local
 COPY --chown=node:node package.json server.ts ./
 COPY --chown=node:node lib/ ./lib/
+RUN mkdir -p /app/data && chown node:node /app/data
 USER node
 EXPOSE 8788
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

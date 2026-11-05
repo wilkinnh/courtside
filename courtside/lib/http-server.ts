@@ -4,6 +4,8 @@ import {timingSafeEqual} from 'node:crypto';
 import {readFile, stat} from 'node:fs/promises';
 import {resolve, extname, sep} from 'node:path';
 import {api} from './sports.ts';
+import {createPreferenceStore} from './preference-store.ts';
+import {validPreferences} from './preferences.ts';
 
 const types:Record<string,string>={
  '.webmanifest':'application/manifest+json; charset=utf-8',
@@ -13,8 +15,9 @@ const types:Record<string,string>={
  '.ico':'image/x-icon','.woff2':'font/woff2','.md':'text/plain; charset=utf-8',
  '.yaml':'text/plain; charset=utf-8','.txt':'text/plain; charset=utf-8',
 };
-export function createCourtsideServer({assetDirectory,key,homeAssistant}:{assetDirectory:string;key?:string;homeAssistant?:HomeAssistantConfig}){
+export function createCourtsideServer({assetDirectory,key,homeAssistant,dataDirectory='data'}:{assetDirectory:string;key?:string;homeAssistant?:HomeAssistantConfig;dataDirectory?:string}){
  const root=resolve(assetDirectory);
+ const preferences=createPreferenceStore(resolve(dataDirectory));
  const server=http.createServer(async(req,res)=>{
   res.setHeader('X-Content-Type-Options','nosniff');
   res.setHeader('Referrer-Policy','strict-origin-when-cross-origin');
@@ -29,9 +32,20 @@ export function createCourtsideServer({assetDirectory,key,homeAssistant}:{assetD
      const expected=Buffer.from('Bearer '+key),received=Buffer.from(req.headers.authorization||'');
      if(received.length!==expected.length||!timingSafeEqual(received,expected)){send(401,'Unauthorized');return;}
     }
-    if(url.pathname.startsWith('/api/v1/home-assistant/')&&req.method==='POST'&&!req.headers['content-type']?.startsWith('application/json')){send(415,'Content-Type must be application/json');return;}
+    if(((url.pathname==='/api/v1/preferences'&&['POST','PATCH'].includes(req.method||''))||(url.pathname.startsWith('/api/v1/home-assistant/')&&req.method==='POST'))&&!req.headers['content-type']?.startsWith('application/json')){send(415,'Content-Type must be application/json');return;}
     let size=0;const chunks:Buffer[]=[];
     for await(const chunk of req){size+=chunk.length;if(size>32768){send(413,'Payload too large');return;}chunks.push(chunk);}
+    if(url.pathname==='/api/v1/preferences'){
+     if(!['GET','POST','PATCH'].includes(req.method||'')){res.setHeader('Allow','GET, POST, PATCH');send(405,'Method not allowed');return;}
+     let value;
+     if(req.method==='GET')value=await preferences.read();
+     else{
+      let body:unknown;try{body=JSON.parse(Buffer.concat(chunks).toString());}catch{send(400,'Invalid JSON');return;}
+      if(!validPreferences(body,req.method==='PATCH')){send(400,'Invalid preferences');return;}
+      value=await preferences.update(body,req.method==='POST');
+     }
+     res.writeHead(200,{'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify({preferences:value}));return;
+    }
     const request=new Request(url,{method:req.method,headers:{'Content-Type':'application/json'},...(['GET','HEAD'].includes(req.method||'GET')?{}:{body:Buffer.concat(chunks).toString()})});
     const result=await (url.pathname.startsWith('/api/v1/home-assistant/')?homeAssistantApi(request,homeAssistant):api(request));res.writeHead(result.status,Object.fromEntries(result.headers));res.end(await result.text());return;
    }
