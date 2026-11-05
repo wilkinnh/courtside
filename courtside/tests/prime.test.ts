@@ -26,3 +26,15 @@ test('Prime Apple TV link uses full provider GTI and preserves browser URL',asyn
   assert.equal(appleTvUrl(link),null);
  }
 });
+
+test('Prime discovery is triggered by the provider without a specific team',async()=>{
+ const {enrichPrime}=await import('../lib/prime.ts');
+ const g:any={...game,state:'pre',broadcasts:['Prime Video'],links:[],teams:[{name:'Example Visitors',shortName:'Visitors'},{name:'Example Hosts',shortName:'Hosts'}]};
+ const c={...card,title:'Visitors vs. Hosts',entitlementCues:{focusMessage:{message:'Watch with Prime'}}};
+ const original=globalThis.fetch;let calls=0;
+ globalThis.fetch=async(input)=>{calls++;return new Response(String(input).endsWith('/sports')?wrap(c):detailDoc({title:c.title,gti:'amzn1.dv.gti.225db05b-975a-4865-9499-acfb06f78a0b'}));};
+ try{
+  assert.equal(await enrichPrime([g]),true);assert.equal(g.links[0].service,'prime');assert.ok(g.links[0].appUrl);assert.equal(calls,2);
+  assert.equal(await enrichPrime([{...g,broadcasts:['ESPN'],links:[]}]),null);assert.equal(calls,2);
+ }finally{globalThis.fetch=original;}
+});

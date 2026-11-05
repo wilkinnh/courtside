@@ -1,3 +1,5 @@
+import {teamsMatch,titleMatches} from './event-matching.ts';
+export {titleMatches} from './event-matching.ts';
 import {enrichMax,maxAppUrl} from './max.ts';
 import {enrichParamount,paramountAppUrl} from './paramount.ts';
 import {isFoxWebUrl} from './fox.ts';
@@ -20,27 +22,6 @@ export async function catalogHtml(url:string,accept='text/html'):Promise<string>
 }
 export function nextData(text:string){const m=/<script\b[^>]*id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/i.exec(text);if(!m)throw new Error('Catalog data missing');return JSON.parse(m[1]);}
 function walk(v:any,visit:(v:any)=>void,depth=0){if(!v||typeof v!=='object'||depth>40)return;visit(v);for(const x of Object.values(v))walk(x,visit,depth+1);}
-const clean=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');
-const aliases:Record<string,string[]>={
- 'Manchester City':['Man City','Man. City'],'Manchester United':['Man United','Man. United'],
- 'Tottenham Hotspur':['Spurs','Tottenham'],'Brighton & Hove Albion':['Brighton'],
- 'AFC Bournemouth':['Bournemouth'],'Bournemouth':['AFC Bournemouth'],
- 'Nottingham Forest':['Nottm Forest'],
- 'Internazionale':['Inter','Inter Milan','FC Internazionale Milano'],'Lyon':['OL Lyonnes'],
- 'Arsenal':['Arsenal WFC'],'Benfica':['SL Benfica'],
-};
-export function teamMatches(value:string,name:string,league:string){
- const names=[name,...(aliases[name]||[])];
- // NBA nicknames are unambiguous within that league; never use them across sports.
- if(league==='nba')names.push(name.replace(/^(?:Los Angeles|New York|Golden State|Oklahoma City|New Orleans|San Antonio|[A-Za-z]+) /,''));
- if(league==='nfl')names.push(name.split(' ').slice(-1).join(' '));
- return names.some(n=>n&&clean(n)===clean(value));
-}
-export function titleMatches(title:string,g:Game){
- const sides=title.replace(/\s*\((?:Español|Spanish)\)\s*$/i,'').split(/\s+(?:v\.?|vs\.?|at|@)\s+/i);
- const matches=(side:string,t:Game['teams'][number])=>teamMatches(side,t.name,g.league)||(g.league==='ncaaf'&&!!t.shortName&&clean(side)===clean(t.shortName));
- return sides.length===2&&g.teams.length===2&&((matches(sides[0],g.teams[0])&&matches(sides[1],g.teams[1]))||(matches(sides[1],g.teams[0])&&matches(sides[0],g.teams[1])));
-}
 const peacockPages:Record<string,string[]>={epl:['premier-league'],nfl:['nfl'],nba:['nba'],ncaaf:['big-ten-football'],mlb:['mlb']};
 export function peacockLinks(text:string,g:Game,sourceUrl:string):WatchLink[]{
  const d=nextData(text);let base='';walk(d,v=>{if(v.watchEndpoint?.base==='/watch/asset')base=v.watchEndpoint.base;});if(!base)throw new Error('Peacock watch configuration missing');
@@ -63,7 +44,7 @@ export function paramountLinks(text:string,g:Game,sourceUrl:string):WatchLink[]{
   const game=v.game;
   if(v.type!=='live'||v.network!=='PARAMOUNTPLUS'||!v.authentication?.includes('paramountplus')||game?.leagueAbbr!==cfg.league||!['SCHEDULED','PREGAME','INPROGRESS','HALFTIME'].includes(game.gameStatusDesc))continue;
   const delta=Math.abs(Date.parse(g.date)-game.scheduledTimeEpoch*1000);
-  if(!Number.isFinite(delta)||delta>15*60000||g.teams.length!==2||!g.teams.every(t=>teamMatches(t.homeAway==='home'?game.homeTeam?.mediumName||'':game.awayTeam?.mediumName||'',t.name,g.league)))continue;
+  if(!Number.isFinite(delta)||delta>15*60000||g.teams.length!==2||!g.teams.every(t=>['home','away'].includes(t.homeAway)&&teamsMatch({name:t.homeAway==='home'?game.homeTeam?.mediumName||'':game.awayTeam?.mediumName||''},t,g.league)))continue;
   // Use an actual event anchor in the catalog, not a guessed player ID/path.
   if(!/^LET-\d+$/.test(v.id))continue;
   const path=`/watch/${cfg.slug}/${v.id}`;if(!text.includes(`href="${path}"`))continue;
@@ -88,7 +69,7 @@ export function usaLinks(text:string,g:Game,sourceUrl:string):WatchLink[]{
   if(v.gist?.contentType!=='GAME'||v.network!=='usanetwork'||v.league?.title!==usaLeagues[g.league]||!['live','default','upcoming'].includes(v.currentState)||!v.livestreams?.length)return;
   if(g.teams.length!==2||!g.teams.every(t=>{
    const side=t.homeAway==='home'?v.homeTeam:v.awayTeam;
-   return side&&(teamMatches(side.title||'',t.name,g.league)||(g.league==='ncaaf'&&t.shortName&&clean(side.title||'')===clean(t.shortName)));
+   return side&&['home','away'].includes(t.homeAway)&&teamsMatch({name:side.title||''},t,g.league);
   }))return;
   // USA may begin coverage before kickoff. Require the same scheduled window.
   if(!v.schedules?.some((s:any)=>{const delta=Date.parse(g.date)-s.startDate*1000;return Number.isFinite(delta)&&delta>=-15*60000&&delta<=90*60000&&s.endDate*1000>Date.parse(g.date);}))return;

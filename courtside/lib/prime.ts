@@ -1,4 +1,4 @@
-import {titleMatches} from './provider-catalogs.ts';
+import {titleMatches} from './event-matching.ts';
 import type {Game,WatchLink} from './catalog.ts';
 export const HHN_URL='https://www.primevideo.com/channel/17edab23-eb9f-95f2-999a-31e09e70f7d3';
 const SPORTS_URL='https://www.primevideo.com/sports';
@@ -49,12 +49,12 @@ export function matchPrimeDetail(text:string,card:Card,g:Game):WatchLink|null{
  }return null;
 }
 export async function enrichPrime(games:Game[]):Promise<boolean|null>{
- const canes=games.filter(g=>g.state!=='post'&&((g.league==='nhl'&&g.teams.some(t=>t.abbreviation==='CAR'))||g.links.some(l=>l.service==='prime')));
- if(!canes.length)return null;
+ const active=games.filter(g=>g.state!=='post'&&(g.broadcasts.some(b=>/^(Prime Video|Amazon Prime Video|Amazon|Prime|HHN|Hurricanes Hockey Network)$/i.test(b))||g.links.some(l=>['prime','prime-hhn'].includes(l.service))));
+ if(!active.length)return null;
  try{
   const cards=primeCards(await html(SPORTS_URL));if(!cards.length)return false;
   let healthy=true;
-  for(const game of canes){
+  for(const game of active){
    const candidates=cards.filter(c=>c.service==='prime'?titleMatches(c.title,game):game.league==='nhl'&&sameTeams(c.synopsis,game)).slice(0,3);
    const results=await Promise.all(candidates.map(async card=>{try{return matchPrimeDetail(await html(card.url),card,game);}catch{healthy=false;return null;}}));
    const links=results.filter((l):l is WatchLink=>l!==null);

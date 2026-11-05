@@ -19,3 +19,16 @@ test('HBO Max discovery enriches TNT games and reports failures',async()=>{
  assert.equal(await enrichMax([game()],async()=>{throw new Error('offline')}),false);
  assert.equal(await enrichMax([{...game(),broadcasts:['ESPN+']}],async()=>{throw new Error('unexpected')}),null);
 });
+
+test('HBO Max discovers other leagues using structured identity rather than display titles',async()=>{
+ const g=game(),p=fixture();g.league='nba';g.broadcasts=['HBO Max'];
+ g.teams[0].name='Example Visitors';g.teams[1].name='Example Hosts';
+ p.data.content.leagueName='NBA';
+ p.data.content.competitors.forEach((t:any,i:number)=>t.name=g.teams[i].name);
+ p.data.playables.max.title='National broadcast';
+ const search={data:[{data:{configuration:{applicationProps:{requiredParamsMap:{Default:{utsk:'test',utscf:'test'}}}}}}],result:{$kind:'SportingEventLockup',id:p.data.content.id,ariaLabel:'National broadcast'}};
+ assert.equal(await enrichMax([g],async url=>url.includes('uts-api')?JSON.stringify(p):'<script id="serialized-server-data">'+JSON.stringify(search)+'</script>'),true);
+ assert.equal(g.links.length,1);
+ p.data.channels[p.data.playables.max.channelId].name='Different subscription';
+ assert.deepEqual(maxAppleLinks(p,g),[]);
+});

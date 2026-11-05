@@ -76,7 +76,7 @@ Research and primary sources: /link-research.md.
 
 ## Hurricanes Hockey Network on Prime Video
 
-Select `prime-hhn` for HHN and `prime` for base Prime Video. HHN is a separate subscription. Both are included in the updated example YAML. The resolver now discovers HHN event URLs from Prime's sports catalog and validates both teams and the broadcast start time against the ESPN event. Catalog coverage is incomplete and may change; `prime_catalog_available` is false on lookup failure, null when no eligible Hurricanes event was queried, and true when discovery succeeded (not a guarantee of a matching event).
+Select `prime-hhn` for HHN and `prime` for base Prime Video. HHN is a separate subscription. Both are included in the updated example YAML. The resolver now discovers HHN event URLs from Prime's sports catalog and validates both teams and the broadcast start time against the ESPN event. Catalog coverage is incomplete and may change; `prime_catalog_available` is false on lookup failure, null when no eligible Prime or HHN broadcast was queried, and true when discovery succeeded (not a guarantee of a matching event).
 
 An exact HHN match returns a Prime `/detail/` URL in `watch_url` when `prime-hhn` is selected. That is an event page, not a raw video stream. Prime sign-in, regional eligibility, HHN subscription and Apple TV link handling still apply. Device playback remains unverified.
 
