@@ -9,6 +9,7 @@ test('Node serves website and API, protects API when configured, and rejects uns
  const directory=await mkdtemp(join(tmpdir(),'courtside-test-'));
  await writeFile(join(directory,'index.html'),'<h1>Courtside</h1>');
  await writeFile(join(directory,'guide.md'),'Setup guide');
+ await writeFile(join(directory,'manifest.webmanifest'),JSON.stringify({name:'Courtside',display:'standalone'}));
  await writeFile(join(directory,'.env'),'not public');
  const key='test-only-key-with-enough-characters';
  const server=createCourtsideServer({assetDirectory:directory,key});
@@ -17,6 +18,7 @@ test('Node serves website and API, protects API when configured, and rejects uns
  const base=`http://127.0.0.1:${address.port}`;
  try{
   const home=await fetch(base);assert.equal(home.status,200);assert.match(home.headers.get('content-type')!,/text\/html/);assert.match(await home.text(),/Courtside/);
+  const manifest=await fetch(base+'/manifest.webmanifest');assert.equal(manifest.status,200);assert.equal(manifest.headers.get('content-type'),'application/manifest+json; charset=utf-8');assert.equal((await manifest.json() as any).display,'standalone');
   const head=await fetch(base,{method:'HEAD'});assert.equal(head.status,200);assert.equal(await head.text(),'');
   assert.equal((await fetch(base+'/guide.md')).headers.get('content-type'),'text/plain; charset=utf-8');
   assert.equal((await fetch(base+'/api/v1/health')).status,200);

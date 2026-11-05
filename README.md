@@ -64,6 +64,17 @@ The Docker image builds browser assets in one stage and runs a non-root Node pro
 
 The server needs outbound HTTPS access to ESPN for schedules and watch catalogs. Browsers load provider logos and Google Fonts from the internet. Watching still requires your provider subscription, login and compatible app; local hosting does not remove blackouts.
 
+## Phone and home-screen shortcut
+
+Courtside adapts to phone screens with one-column game cards, labeled navigation, larger controls, and safe spacing around notches and the home indicator. A web manifest and PNG icons provide the home-screen name and icon.
+
+After rebuilding and restarting your server, open `http://YOUR_SERVER_LAN_IP:8788` on your phone while connected to your home network:
+
+- **iPhone:** Safari → Share → Add to Home Screen → Add. Enable Open as Web App if offered.
+- **Android:** Chrome → menu → Add to Home screen (or Install app, if offered).
+
+Use the server’s network address, not `localhost`. Keep the server running; schedules and watch links need a network connection. Full app installation depends on browser support and generally requires HTTPS; a home-screen shortcut can still be used with your LAN server. Preferences are saved on each device/browser, so set up your services in the home-screen app after adding it.
+
 ## Home Assistant / Apple TV
 
 Use `http://YOUR_SERVER_LAN_IP:8788/api/v1/resolve` in [home-assistant.yaml](public/home-assistant.yaml). Replace the Team Tracker and Apple TV entity IDs. If the local API has no key, remove the example `headers` / `authorization` entries; if it has a key, configure the matching secret.
