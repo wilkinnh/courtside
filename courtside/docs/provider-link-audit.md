@@ -7,7 +7,7 @@ Discovery is triggered by broadcast/provider metadata. Event URLs use IDs and ro
 | ESPN | Joins Watch catalog entries by ESPN event ID; preserves provider playback metadata. |
 | Paramount+ | Searches Apple catalog for the scheduled teams, validates structured event and Paramount provider identity, formats the supplied route/UUID as `pplus://` with a trailing slash. |
 | HBO Max | Uses the same structured Apple event matching across configured leagues; requires an actual HBO Max playable before exposing its sports URL. TNT/TBS/truTV merely trigger lookup. |
-| Prime / HHN | Broadcast or provider link triggers lookup, with no Carolina team requirement. Validates teams, start time and subscription; uses provider full GTI for Apple TV. HHN remains a distinct subscription. |
+| Prime / HHN | Broadcast or provider link triggers lookup; all active NHL games are also checked because schedule metadata may omit regional HHN broadcasts. No Carolina team requirement. Validates teams, start time and subscription; uses provider full GTI for Apple TV. HHN remains a distinct subscription. |
 | Peacock | Validates teams and start time in supported league catalogs; uses the supplied asset UUID in the playback payload. |
 | USA / Xfinity | Validates structured teams, league and time; published event URLs remain browser-only. |
 | CBS Sports fallback | Validates Paramount authentication, teams, league and time; published CBS event pages remain browser-only. |

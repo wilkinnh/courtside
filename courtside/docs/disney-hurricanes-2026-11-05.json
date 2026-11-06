@@ -1,0 +1,35 @@
+{
+  "observedOn": "2026-11-05",
+  "espnEvent": {
+    "eventId": 401892652,
+    "name": "Carolina Hurricanes vs. New York Islanders",
+    "utc": "2026-11-05T19:00:00-05:00"
+  },
+  "espnStreams": [
+    {
+      "id": "f2c07653-48e8-4f13-a042-fc21db9b109c",
+      "packages": [
+        "ESPN_PLUS",
+        "HULU_BASE",
+        "D+_ESPN_Basic",
+        "HULU_SVOD_Unlocked"
+      ],
+      "webUrl": "https://www.espn.com/watch/player?id=f2c07653-48e8-4f13-a042-fc21db9b109c"
+    }
+  ],
+  "disney": {
+    "url": "https://www.disneyplus.com/browse/entity-803f8774-b180-4727-92c3-9cf3893c164c",
+    "pageId": "entity-803f8774-b180-4727-92c3-9cf3893c164c",
+    "title": "Watch Carolina Hurricanes vs. New York Islanders | Disney+",
+    "isReplayTitle": false,
+    "publicPageHasScheduledStart": false
+  },
+  "apple": {
+    "canonicalId": "umc.cse.c5de2ycyf6u54rs9jv7txmjw",
+    "providers": [
+      "ESPN"
+    ]
+  },
+  "automaticEntityMappingFound": false,
+  "appleTvPlaybackVerified": false
+}

@@ -76,7 +76,7 @@ Research and primary sources: /link-research.md.
 
 ## Hurricanes Hockey Network on Prime Video
 
-Select `prime-hhn` for HHN and `prime` for base Prime Video. HHN is a separate subscription. Both are included in the updated example YAML. The resolver now discovers HHN event URLs from Prime's sports catalog and validates both teams and the broadcast start time against the ESPN event. Catalog coverage is incomplete and may change; `prime_catalog_available` is false on lookup failure, null when no eligible Prime or HHN broadcast was queried, and true when discovery succeeded (not a guarantee of a matching event).
+Select `prime-hhn` for HHN and `prime` for base Prime Video. HHN is a separate subscription. Both are included in the updated example YAML. The resolver now discovers HHN event URLs from Prime's sports catalog and validates both teams and the broadcast start time against the ESPN event. Catalog coverage is incomplete and may change; `prime_catalog_available` is false on lookup failure, null when no active NHL game or eligible Prime/HHN broadcast was queried, and true when discovery succeeded (not a guarantee of a matching event).
 
 An exact HHN match returns a Prime `/detail/` URL in `watch_url` when `prime-hhn` is selected. That is an event page, not a raw video stream. Prime sign-in, regional eligibility, HHN subscription and Apple TV link handling still apply. Device playback remains unverified.
 
@@ -127,3 +127,5 @@ The user verified Arsenal playback from a fresh Paramount+ launch on November 4,
 ## Shared household preferences
 
 `GET /api/v1/preferences` returns `{ "preferences": null }` before migration, or the shared preferences object. `POST /api/v1/preferences` initializes the profile with a complete object only when absent; later POSTs return the existing profile. `PATCH /api/v1/preferences` saves only supplied fields, preserving other settings. Supported fields: `hhnSetup`, `hiddenSports`, `services`, `channels`, `favorites`, `hideScores`, `onlyMine`, `overrides`. Writes require `Content-Type: application/json` and the configured API key, just like other protected endpoints. Credentials are never part of the shared profile. Responses are not cached. One Node server process owns this file; do not share it between multiple server processes.
+
+HHN discovery also checks active NHL games when broadcast metadata omits HHN. Only a matching Prime catalog entry with an HHN entitlement, both teams and the scheduled time adds a `prime-hhn` event link; a base Prime subscription does not include it.

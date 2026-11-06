@@ -35,6 +35,24 @@ test('Prime discovery is triggered by the provider without a specific team',asyn
  globalThis.fetch=async(input)=>{calls++;return new Response(String(input).endsWith('/sports')?wrap(c):detailDoc({title:c.title,gti:'amzn1.dv.gti.225db05b-975a-4865-9499-acfb06f78a0b'}));};
  try{
   assert.equal(await enrichPrime([g]),true);assert.equal(g.links[0].service,'prime');assert.ok(g.links[0].appUrl);assert.equal(calls,2);
-  assert.equal(await enrichPrime([{...g,broadcasts:['ESPN'],links:[]}]),null);assert.equal(calls,2);
+  assert.equal(await enrichPrime([{...g,league:'nba',broadcasts:['ESPN'],links:[]}]),null);assert.equal(calls,2);
  }finally{globalThis.fetch=original;}
+});
+
+
+test('HHN discovery works without broadcast metadata and stays separate from base Prime',async()=>{
+ const {enrichPrime}=await import('../lib/prime.ts');
+ const {selectedLinks}=await import('../lib/sports.ts');
+ const g:any={...game,state:'pre',broadcasts:[],links:[]};
+ const other:any={...g,teams:[{name:'Boston Bruins'},{name:'Toronto Maple Leafs'}],links:[]};
+ const finished:any={...g,state:'post',links:[]};
+ const calls:string[]=[];
+ const fetchText=async(url:string)=>{calls.push(url);return url.endsWith('/sports')?wrap(card):detailDoc({gti:'amzn1.dv.gti.225db05b-975a-4865-9499-acfb06f78a0b'});};
+ assert.equal(await enrichPrime([g,other,finished],fetchText),true);
+ assert.equal(calls.length,2);
+ assert.equal(g.links[0].service,'prime-hhn');assert.ok(g.links[0].appUrl);
+ assert.equal(selectedLinks(g,['prime']).length,0);
+ assert.equal(selectedLinks(g,['prime-hhn']).length,1);
+ assert.deepEqual(other.links,[]);assert.deepEqual(finished.links,[]);
+ assert.equal(await enrichPrime([finished],fetchText),null);assert.equal(calls.length,2);
 });

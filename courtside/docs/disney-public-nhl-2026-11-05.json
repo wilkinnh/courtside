@@ -1,0 +1,79 @@
+{
+  "sourceUrl": "https://www.disneyplus.com/browse/entity-7fc0cd37-bb18-4f01-9015-107b80d4da3e",
+  "observedOn": "2026-11-05",
+  "authenticationRequired": false,
+  "gameCards": [
+    {
+      "_type": "ImageCard",
+      "_id": "76c5b076-7606-40a1-a902-2e3335819b5c",
+      "title": "Edmonton Oilers vs. New Jersey Devils",
+      "url": "/browse/entity-76c5b076-7606-40a1-a902-2e3335819b5c",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "efb4cc21-cac9-4f7b-ba2d-4d7ebd0d6a3a",
+      "title": "Winnipeg Jets vs. Montreal Canadiens (Canadiens Broadcast)",
+      "url": "/browse/entity-efb4cc21-cac9-4f7b-ba2d-4d7ebd0d6a3a",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "d94f457d-b7f0-4964-840c-ce808b7b7964",
+      "title": "Calgary Flames vs. San Jose Sharks (Sharks Broadcast)",
+      "url": "/browse/entity-d94f457d-b7f0-4964-840c-ce808b7b7964",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "0bb863fe-9984-4523-92a9-395cd6a6ad1d",
+      "title": "Colorado Avalanche vs. Chicago Blackhawks (Avalanche Broadcast)",
+      "url": "/browse/entity-0bb863fe-9984-4523-92a9-395cd6a6ad1d",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "d189dd7a-3f65-4baa-9660-486381fe2510",
+      "title": "Detroit Red Wings vs. Florida Panthers (Red Wings Broadcast)",
+      "url": "/browse/entity-d189dd7a-3f65-4baa-9660-486381fe2510",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "71100d25-9ad9-4210-99db-12245296eb39",
+      "title": "Vegas Golden Knights vs. Boston Bruins (Bruins Broadcast)",
+      "url": "/browse/entity-71100d25-9ad9-4210-99db-12245296eb39",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "9755d044-d53d-4ec3-be00-b80b4c19f888",
+      "title": "Ottawa Senators vs. Anaheim Ducks (Ducks Broadcast)",
+      "url": "/browse/entity-9755d044-d53d-4ec3-be00-b80b4c19f888",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "bb4acbf6-1557-41d2-8f30-2284b1f533cd",
+      "title": "Edmonton Oilers vs. New York Rangers (Rangers Broadcast)",
+      "url": "/browse/entity-bb4acbf6-1557-41d2-8f30-2284b1f533cd",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "712777a3-5d7d-45c6-9756-846a1210e41a",
+      "title": "Utah Mammoth vs. Philadelphia Flyers (Flyers Broadcast)",
+      "url": "/browse/entity-712777a3-5d7d-45c6-9756-846a1210e41a",
+      "badgeText": "Replay"
+    },
+    {
+      "_type": "ImageCard",
+      "_id": "6ddaac3a-02af-4e99-b07c-92bb9051b02b",
+      "title": "Minnesota Wild vs. Washington Capitals (Capitals Broadcast)",
+      "url": "/browse/entity-6ddaac3a-02af-4e99-b07c-92bb9051b02b",
+      "badgeText": "Replay"
+    }
+  ],
+  "targetEntityPresent": false,
+  "liveOrUpcomingCardsPresent": false
+}

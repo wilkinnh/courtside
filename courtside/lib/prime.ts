@@ -48,15 +48,17 @@ export function matchPrimeDetail(text:string,card:Card,g:Game):WatchLink|null{
   }
  }return null;
 }
-export async function enrichPrime(games:Game[]):Promise<boolean|null>{
- const active=games.filter(g=>g.state!=='post'&&(g.broadcasts.some(b=>/^(Prime Video|Amazon Prime Video|Amazon|Prime|HHN|Hurricanes Hockey Network)$/i.test(b))||g.links.some(l=>['prime','prime-hhn'].includes(l.service))));
+export async function enrichPrime(games:Game[],fetchText:(url:string)=>Promise<string>=html):Promise<boolean|null>{
+ // Regional HHN broadcasts may be absent from schedule metadata. Discover from the
+ // catalog for every active NHL game, then require the actual HHN entitlement.
+ const active=games.filter(g=>g.state!=='post'&&(g.league==='nhl'||g.broadcasts.some(b=>/^(Prime Video|Amazon Prime Video|Amazon|Prime|HHN|Hurricanes Hockey Network)$/i.test(b))||g.links.some(l=>['prime','prime-hhn'].includes(l.service))));
  if(!active.length)return null;
  try{
-  const cards=primeCards(await html(SPORTS_URL));if(!cards.length)return false;
+  const cards=primeCards(await fetchText(SPORTS_URL));if(!cards.length)return false;
   let healthy=true;
   for(const game of active){
    const candidates=cards.filter(c=>c.service==='prime'?titleMatches(c.title,game):game.league==='nhl'&&sameTeams(c.synopsis,game)).slice(0,3);
-   const results=await Promise.all(candidates.map(async card=>{try{return matchPrimeDetail(await html(card.url),card,game);}catch{healthy=false;return null;}}));
+   const results=await Promise.all(candidates.map(async card=>{try{return matchPrimeDetail(await fetchText(card.url),card,game);}catch{healthy=false;return null;}}));
    const links=results.filter((l):l is WatchLink=>l!==null);
    // Never select between ambiguous same-team/time matches automatically.
    if(links.length===1){game.links=[links[0],...game.links.filter(l=>l.service!==links[0].service)];}
