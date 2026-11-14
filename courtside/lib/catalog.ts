@@ -10,22 +10,25 @@ export const sportCategories = [
  {name:'MLS',icon:'⚽',leagues:['mls']},
  {name:'Champions League',icon:'⚽',leagues:['ucl']},
  {name:'UEFA Nations League',icon:'⚽',leagues:['nations']},
+ {name:'Concacaf Nations League',icon:'⚽',leagues:['concacaf-nations']},
  {name:'Serie A',icon:'⚽',leagues:['seriea']},
  {name:'Carabao Cup',icon:'⚽',leagues:['eflcup']},
  {name:'EFL Championship',icon:'⚽',leagues:['eflchampionship']},
  {name:"Women's Champions League",icon:'⚽',leagues:['uwcl']},
+ {name:"Women's Nations League",icon:'⚽',leagues:['womens-nations']},
 ];
 export function sportCategory(league:string){return sportCategories.find(c=>c.leagues.includes(league))?.name||'';}
 export function migrateHiddenSports(hidden:unknown):string[]{
  const values=Array.isArray(hidden)?hidden:['Basketball'];
- const soccer=["Premier League","MLS","Champions League","UEFA Nations League","Serie A","Carabao Cup","EFL Championship"];
+ const soccer=["Premier League","MLS","Champions League","UEFA Nations League","Concacaf Nations League","Serie A","Carabao Cup","EFL Championship"];
+ const womensSoccer=["Women's Champions League","Women's Nations League"];
  const previous:Record<string,string[]>={
-  "Men's soccer":soccer,"Women's soccer":["Women's Champions League"],
+  "Men's soccer":soccer,"Women's soccer":womensSoccer,
   Football:["Men's pro football","Men's college football"],
   Basketball:["Men's pro basketball","Men's college basketball"],
   'Pro football':["Men's pro football"], 'College football':["Men's college football"],
   'Pro basketball':["Men's pro basketball"], 'College basketball':["Men's college basketball"],
-  Baseball:["Men's baseball"],Hockey:["Men's hockey"],Soccer:[...soccer,"Women's Champions League"],
+  Baseball:["Men's baseball"],Hockey:["Men's hockey"],Soccer:[...soccer,...womensSoccer],
  };
  return [...new Set(values.flatMap(s=>typeof s==='string'?(previous[s]||[s]):[]).filter(s=>sportCategories.some(c=>c.name===s)))];
 }
@@ -44,6 +47,8 @@ export const leagues = [
  {id:'mls', name:'MLS', sport:'Soccer', path:'soccer/usa.1', icon:'⚽'},
  {id:'ucl', name:'Champions League', sport:'Soccer', path:'soccer/uefa.champions', icon:'⚽'},
  {id:'nations', name:'UEFA Nations League', sport:'Soccer', path:'soccer/uefa.nations', icon:'⚽'},
+ {id:'concacaf-nations', name:'Concacaf Nations League', sport:'Soccer', path:'soccer/concacaf.nations.league', icon:'⚽'},
+ {id:'womens-nations', name:"Women's Nations League", sport:'Soccer', path:'soccer/uefa.w.nations', icon:'⚽'},
 ];
 export const services = [
  {id:'prime-hhn',name:'HHN on Prime Video',short:'Prime · HHN',color:'#6dc9f4',url:'https://www.primevideo.com/channel/17edab23-eb9f-95f2-999a-31e09e70f7d3',channels:['HHN','Hurricanes Hockey Network'],note:'Separate Hurricanes Hockey Network subscription for eligible in-market viewers. Base Prime alone does not include HHN.'},
