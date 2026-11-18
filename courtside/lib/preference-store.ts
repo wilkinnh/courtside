@@ -10,7 +10,14 @@ export function createPreferenceStore(directory:string){
   let text:string;
   try{text=await readFile(file,'utf8');}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;}
   const prefs:unknown=JSON.parse(text);
-  if(!validPreferences(prefs))throw new Error('Invalid saved preferences');
+  if(!validPreferences(prefs,false,true))throw new Error('Invalid saved preferences');
+  if(prefs&&typeof prefs==='object'&&Object.hasOwn(prefs,'overrides')){
+   const clean={...(prefs as Prefs & {overrides?:unknown})};delete clean.overrides;
+   const temporary=join(directory,`.preferences-${randomUUID()}.tmp`);
+   try{await writeFile(temporary,JSON.stringify(clean,null,2)+'\n',{mode:0o600});await rename(temporary,file);}
+   finally{await rm(temporary,{force:true});}
+   return clean;
+  }
   return prefs;
  }
  function serialized<T>(operation:()=>Promise<T>):Promise<T>{

@@ -22,7 +22,7 @@ test('shared preferences migrate once, merge concurrent edits, and survive a ser
  try{
   assert.equal((await fetch(running.base+'/api/v1/preferences')).status,401);
   assert.deepEqual(await (await running.request()).json(),{preferences:null});
-  const migrated={...initialPreferences,services:['peacock'],favorites:['123'],hideScores:true,overrides:[{event_id:'123',league:'nhl',service:'espn',url:'https://www.espn.com/watch/player/example'}]};
+  const migrated={...initialPreferences,services:['peacock'],favorites:['123'],hideScores:true};
   assert.deepEqual((await (await running.request('POST',migrated)).json() as {preferences:Prefs}).preferences,migrated);
   // A second device's old local state must never replace the household profile.
   assert.deepEqual((await (await running.request('POST',initialPreferences)).json() as {preferences:Prefs}).preferences,migrated);
@@ -33,7 +33,7 @@ test('shared preferences migrate once, merge concurrent edits, and survive a ser
   assert.deepEqual((await response.json() as {preferences:Prefs}).preferences,expected);
   assert.equal((await running.request('PATCH',{hideScores:'true'})).status,400);
   assert.equal((await running.request('PATCH',{apiKey:'secret'})).status,400);
-  assert.equal((await running.request('PATCH',{overrides:[{url:'javascript:alert(1)'}]})).status,400);
+  assert.equal((await running.request('PATCH',{overrides:[{url:'https://www.espn.com/watch/player/example'}]})).status,400);
   assert.equal((await running.request('PUT',initialPreferences)).status,405);
   assert.equal((await running.request('PATCH',{favorites:['x'.repeat(33000)]})).status,413);
   assert.equal((await fetch(running.base+'/api/v1/preferences',{method:'PATCH',headers:{Authorization:'Bearer '+key},body:'{}'})).status,415);

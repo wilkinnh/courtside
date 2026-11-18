@@ -12,7 +12,7 @@ Discovery is triggered by broadcast/provider metadata. Event URLs use IDs and ro
 | USA / Xfinity | Validates structured teams, league and time; published event URLs remain browser-only. |
 | CBS Sports fallback | Validates Paramount authentication, teams, league and time; published CBS event pages remain browser-only. |
 | FOX | FS1/FS2 channel fallbacks and saved event pages remain browser-only; no validated native game discovery. |
-| Disney+, NBA, Apple TV | No dedicated automatic event catalog adapter. Existing metadata or saved event links may be available; generic service links are not direct games. |
+| Disney+, NBA, Apple TV | No dedicated automatic event catalog adapter. Server-discovered metadata may be available; generic service links are not direct games. |
 | OTA | No direct streaming event URL; requires a tuner/app. |
 
 Name matching uses full and short names supplied by the catalogs, with generic soccer club-prefix normalization. No team alias table or guessed city/nickname list remains. Apple matching validates home/away, league and kickoff; a translated opponent requires one matching team plus exact venue and kickoff. Missing or ambiguous evidence leaves the direct link unavailable.

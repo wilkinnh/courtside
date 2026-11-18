@@ -35,7 +35,7 @@ The former hosted copy is owner-only pending deletion. Node/Docker is the suppor
 - POST /api/v1/resolve — resolve one ESPN event. Request JSON:
 
 ```json
-{"league":"nba","event_id":"401909884","services":["espn","peacock"],"overrides":[]}
+{"league":"nba","event_id":"401909884","services":["espn","peacock"]}
 ```
 
 Or pass `attributes` containing Team Tracker `sport_path`, `league_path`, `event_url`, `date`, `team_id`, `opponent_id`. `team_tracker.attributes` is also accepted. There is no assumption of a Team Tracker event_id attribute: the resolver extracts the ESPN gameId from event_url. If unavailable, it requires a unique schedule match by date and team IDs. Ambiguous matches return 409.
@@ -49,16 +49,6 @@ Links include URL, service, provenance, lookup time, subscription requirement an
 Starting selections: Xfinity, Disney+, Paramount+, Peacock, HBO Max, ESPN, OTA. Select your actual Xfinity/OTA channels in the website. No package/channel entitlement is assumed. Disney+ alone is not an ESPN subscription; ESPN Select and Unlimited are distinct. HBO Max sports need an eligible tier. OTA on Apple TV requires a tuner plus compatible app. Xfinity on Apple TV generally requires the home Xfinity network.
 
 Service matching is conservative: Peacock and Paramount+ require those explicit broadcast names, rather than inferring all NBC/CBS matches. Browser channel choices can show possible TV coverage, but do not manufacture provider playback URLs.
-
-## Exact link overrides
-
-For providers without an accessible event catalog, save a provider's real event URL in the game dialog. Export from Preferences, then include the objects in `overrides`:
-
-```json
-[{"event_id":"401909884","league":"nba","service":"espn","url":"https://www.espn.com/watch/player?id=960a0879-e849-467e-9692-2cfdce4580ac"}]
-```
-
-Overrides must use HTTPS on supported provider hosts; they are never fetched by the server. They are explicitly labeled user-supplied and not playback-verified. Browser overrides are not server-side persistent storage. Never include expiring playback manifests, session tokens or credentials in saved links.
 
 ## Apple TV and Home Assistant
 
@@ -120,12 +110,12 @@ Apple TV fallback: use Home Assistant `media_player.select_source` with the exac
 
 Any active game in a configured Courtside league that lists Paramount+ triggers discovery in Apple's US sports catalog. There is no team allowlist or hard-coded Paramount competition route. The resolver uses catalog-supplied full/short team names, home/away, league, and kickoff to identify the event. If an opponent's name differs across languages, one exact team plus exact venue and kickoff is required. The unique English live Paramount+ playable supplies both the route and UUID; its display title is not used to infer identity. Missing or ambiguous catalog entries leave the native link unavailable. Finished-game replay discovery remains separate and unsupported.
 
-`watch_url` remains HTTPS. `apple_tv_url` and the website's player handoff use `pplus://www.paramountplus.com/live-tv/stream/<competition>/<event UUID>/`, with a trailing slash and no referral parameters. The Home Assistant endpoint accepts this narrowly validated native route only for provider `paramount`, and also converts matching Paramount HTTPS event URLs. Saved browser event overrides can use the HTTPS route; arbitrary custom schemes remain disallowed.
+`watch_url` remains HTTPS. `apple_tv_url` and the website's player handoff use `pplus://www.paramountplus.com/live-tv/stream/<competition>/<event UUID>/`, with a trailing slash and no referral parameters. The Home Assistant endpoint accepts this narrowly validated native route only for provider `paramount`, and also converts matching Paramount HTTPS event URLs. The resolver only uses event links found in server-side provider data; arbitrary client-supplied game links are not accepted.
 
 The user verified Arsenal playback from a fresh Paramount+ launch on November 4, 2026. If the app opens the wrong stream, force quit Paramount+ on Apple TV and retry. Courtside does not force quit apps automatically. This format-level test does not verify every game; `device_verified` and `autoplay_safe` remain false. Apple catalog endpoints are an undocumented public website interface and may change.
 
 ## Shared household preferences
 
-`GET /api/v1/preferences` returns `{ "preferences": null }` before migration, or the shared preferences object. `POST /api/v1/preferences` initializes the profile with a complete object only when absent; later POSTs return the existing profile. `PATCH /api/v1/preferences` saves only supplied fields, preserving other settings. Supported fields: `hhnSetup`, `hiddenSports`, `services`, `channels`, `favorites`, `hideScores`, `onlyMine`, `overrides`. Writes require `Content-Type: application/json` and the configured API key, just like other protected endpoints. Credentials are never part of the shared profile. Responses are not cached. One Node server process owns this file; do not share it between multiple server processes.
+`GET /api/v1/preferences` returns `{ "preferences": null }` before migration, or the shared preferences object. `POST /api/v1/preferences` initializes the profile with a complete object only when absent; later POSTs return the existing profile. `PATCH /api/v1/preferences` saves only supplied fields, preserving other settings. Supported fields: `hhnSetup`, `hiddenSports`, `services`, `channels`, `favorites`, `hideScores`, `onlyMine`. Writes require `Content-Type: application/json` and the configured API key, just like other protected endpoints. Credentials are never part of the shared profile. Responses are not cached. One Node server process owns this file; do not share it between multiple server processes.
 
 HHN discovery also checks active NHL games when broadcast metadata omits HHN. Only a matching Prime catalog entry with an HHN entitlement, both teams and the scheduled time adds a `prime-hhn` event link; a base Prime subscription does not include it.

@@ -29,7 +29,7 @@ Browser access was not approved, so the signed-in Disney catalog was not inspect
 
 The supplied HTTPS URL identifies an event page. Opening or starting that game on Apple TV via Home Assistant has not been verified. No custom Disney URL scheme or autoplay path is inferred from this browser URL.
 
-Existing saved-event overrides can use the supplied URL with service `disney`. No game-specific runtime override was added by this investigation. Compact observed metadata is retained in `disney-hurricanes-2026-11-05.json`.
+No game-specific runtime link was added by this investigation; only server-discovered provider links are used. Compact observed metadata is retained in `disney-hurricanes-2026-11-05.json`.
 
 ## Follow-up: supplied search response
 

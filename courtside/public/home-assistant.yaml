@@ -16,7 +16,6 @@ rest_command:
       {{ {
         'attributes': tracker_attributes,
         'services': ['prime', 'prime-hhn', 'xfinity', 'disney', 'paramount', 'peacock', 'max', 'espn', 'ota'],
-        'overrides': []
       } | to_json }}
 
 script:

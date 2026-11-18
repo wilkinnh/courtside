@@ -62,7 +62,7 @@ export async function scoreboard(date:string,ids:string[]){
  return {provider_catalogs,prime_catalog_available,link_catalog_available:!!catalog,events:events.sort((a,b)=>a.date.localeCompare(b.date)),errors,fetched_at:new Date().toISOString(),source:'ESPN',region:'US',partial:errors.length>0};
 }
 export function selectedLinks(g:Game,selected:string[],channels:string[]=[]){return g.links.filter(l=>selected.includes(l.service)||(l.service==='espn'&&g.broadcasts.some(b=>channels.includes(b))));}
-export async function resolveGame(league:string,id:string,selected:string[],overrides:any[]=[]){
+export async function resolveGame(league:string,id:string,selected:string[]){
  const l=leagues.find(l=>l.id===league);if(!l||!/^\d{5,15}$/.test(id))throw new Error('Invalid league or ESPN event ID');
  const d=await jsonFetch(`https://site.api.espn.com/apis/site/v2/sports/${l.path}/summary?event=${id}`);
  if(!d.header?.id)throw new Error('Event not found');
@@ -73,7 +73,6 @@ export async function resolveGame(league:string,id:string,selected:string[],over
  event.broadcasts=[...new Set([...event.broadcasts,...actual.map(x=>x.feed).filter((v):v is string=>!!v)])];
  event.links=[...actual,...event.links].filter((x,i,a)=>a.findIndex(y=>y.url===x.url)===i);
  const [prime_catalog_available,provider_catalogs]=await Promise.all([enrichPrime([event]),enrichProviderCatalogs([event])]);
- for(const o of overrides){const url=safeUrl(o.url);if(url&&o.event_id===id&&o.league===league&&services.some(s=>s.id===o.service))event.links.unshift({service:o.service,label:'Your saved event link',url,kind:'event',...(isFoxWebUrl(url)?{playbackTarget:'browser_only' as const}:{}),source:'User-supplied; playback not verified',verifiedAt:new Date().toISOString(),access:'subscription_required'});}
  const options=selectedLinks(event,selected).sort((a,b)=>Number(b.kind==='event')-Number(a.kind==='event'));
  const best=options.find(o=>o.kind==='event'&&o.language==='en')||options.find(o=>o.kind==='event')||options.find(o=>o.kind==='channel')||null;
  const appleBest=options.find(o=>appleTvCandidate(o)&&o.language==='en')||options.find(appleTvCandidate)||null;
@@ -97,13 +96,13 @@ export async function api(request:Request):Promise<Response>{
  if(request.method==='POST'&&p==='resolve'){
  const body=await request.text();if(body.length>32000)return send({error:'Payload too large'},413);let b;try{b=JSON.parse(body);}catch{return send({error:'Invalid JSON'},400);}
  if(!b||typeof b!=='object'||Array.isArray(b))return send({error:'Expected a JSON object'},400);
+ if(Object.hasOwn(b,'overrides'))return send({error:'Manual event link overrides are not supported'},400);
  const a=b.attributes||b.team_tracker?.attributes||{};const league=b.league||leagues.find(l=>l.path===`${a.sport_path}/${a.league_path}`)?.id;
  let id=String(b.event_id||'');if(!id&&a.event_url){const eventUrl=safeUrl(a.event_url);if(eventUrl && new URL(eventUrl).hostname.endsWith('espn.com'))id=eventUrl.match(/(?:gameId\/|gameId=)(\d+)/)?.[1]||'';}
  if(!league||!leagues.some(l=>l.id===league))return send({error:'Provide league or Team Tracker sport_path and league_path'},400);
  if(!id && a.date && a.team_id){const date=String(a.date).slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(date))return send({error:'Invalid Team Tracker date'},400);const board=await scoreboard(date,[league]);if(board.errors.length)return send({error:'ESPN unavailable'},502);const matches=board.events.filter(g=>g.teams.some(t=>t.id===String(a.team_id))&&(!a.opponent_id||g.teams.some(t=>t.id===String(a.opponent_id))));if(matches.length===1)id=matches[0].id;else return send({error:'No unique event match',matches:matches.map(g=>g.id)},409);}
  if(!/^\d{5,15}$/.test(id)||!Array.isArray(b.services)||b.services.some((s:any)=>typeof s!=='string'||!services.some(x=>x.id===s)))return send({error:'Provide an ESPN event_id and services array'},400);
- if(b.overrides!==undefined&&(!Array.isArray(b.overrides)||b.overrides.some((o:any)=>!o||typeof o!=='object')))return send({error:'overrides must be an array of link objects'},400);
- return send(await resolveGame(league,id,b.services,b.overrides||[]));
+ return send(await resolveGame(league,id,b.services));
  }
  return send({error:'Not found'},404);
  }catch(e){return send({error:e instanceof Error?e.message:'Upstream unavailable'},502);}

@@ -21,7 +21,8 @@ export function usePreferences(apiFetch:(url:string,options?:RequestInit)=>Promi
   try{
    const saved=JSON.parse(localStorage.getItem('courtside-v1')||'null');
    if(saved&&Array.isArray(saved.services)){
-    const migrated={...initialPreferences,...saved,hhnSetup:true,services:saved.hhnSetup?saved.services:[...new Set([...saved.services,'prime','prime-hhn'])],hiddenSports:migrateHiddenSports(saved.hiddenSports)};
+    const legacySafe={...saved};delete legacySafe.overrides;
+    const migrated={...initialPreferences,...legacySafe,hhnSetup:true,services:saved.hhnSetup?saved.services:[...new Set([...saved.services,'prime','prime-hhn'])],hiddenSports:migrateHiddenSports(saved.hiddenSports)};
     if(validPreferences(migrated))candidate=migrated;
    }
   }catch{}
