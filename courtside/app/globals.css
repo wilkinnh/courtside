@@ -52,3 +52,69 @@
 .ha-player{margin:22px 0;padding:18px;border:1px solid var(--border);border-radius:9px}.ha-player h3{margin-bottom:8px}.ha-player .primary{margin-top:14px}
 
 .watch-option-details{min-width:0}.watch-urls{margin:0;padding:12px 15px;background:#131a10;border:1px solid #435237;border-top:0;border-radius:0 0 8px 8px}.watch-option-details .watch-option{border-radius:8px 8px 0 0}.watch-urls dt{font-size:10px;color:#9eaf8c;margin-bottom:5px}.watch-urls dd{margin:0}.watch-urls dd+dt{margin-top:12px}.watch-urls code{display:block;white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;font-size:11px;line-height:1.6}
+
+/* Game schedule: navigation, search and filters share one compact top bar. */
+main{margin-left:0;min-width:0}
+.topbar{position:sticky;top:0;z-index:30;min-height:64px;height:auto;padding:10px 36px;display:flex;align-items:center;gap:18px;background:#101311f2;backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.brand{flex-shrink:0;font-size:23px;padding:0;gap:7px}
+.brand-mark{width:27px;height:27px}
+.brand-name{display:inline-flex;align-items:baseline}
+.brand-dot{margin-left:0}
+.primary-nav,.topbar-tools{display:flex;align-items:center;gap:7px;min-width:0}
+.primary-nav{flex-shrink:0}
+.topbar-tools{margin-left:auto}
+.topbar-nav-button,.icon-button{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:40px;height:40px;padding:0 11px;border:1px solid transparent;border-radius:7px;color:#aeb7a5;font-size:12px;white-space:nowrap}
+.topbar-nav-button:hover,.icon-button:hover{background:#20271e;color:var(--accent)}
+.topbar-nav-button.active{background:#263321;color:var(--accent)}
+.topbar-nav-button small{position:absolute;top:1px;right:2px;min-width:15px;padding:1px 4px;border-radius:8px;background:#c2ef78;color:#233219;font-size:9px;line-height:1.2;text-align:center}
+.icon-button{width:40px;padding:0;border-color:#30392b}
+.topbar-search{width:250px;min-width:0;height:40px;padding:0 11px;background:#171c17}
+.topbar-search input{width:100%;min-width:0;font-size:12px}
+.filter-control{position:relative}
+.filter-popover{position:absolute;top:calc(100% + 12px);right:0;z-index:35;width:min(350px,calc(100vw - 28px));padding:16px;background:#1b211b;border:1px solid #46523d;border-radius:10px;box-shadow:0 18px 48px #0009}
+.filter-popover-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 12px}
+.filter-popover-heading b{font-size:14px}
+.filter-popover-heading span{font-size:10px;color:#9eaf8c}
+.filter-options{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-height:min(44vh,320px);overflow:auto;overscroll-behavior:contain}
+.filter-options button{display:flex;align-items:center;gap:8px;min-height:36px;padding:7px 9px;text-align:left;border:1px solid #30392b;border-radius:6px;color:#a9b49f;font-size:11px}
+.filter-options button span{font-size:14px}
+.filter-options button.selected{background:#d0efa5;border-color:#d0efa5;color:#243219;font-weight:650}
+.manage-services{display:flex;align-items:center;gap:8px;width:100%;margin-top:12px;padding:11px 8px 2px;border-top:1px solid #30392b;color:#c7e6a7;font-size:11px;text-align:left}
+.manage-services span{margin-left:auto;color:#9eaf8c}
+.content{max-width:1600px;margin:auto;padding:14px 36px 20px}
+.schedule-toolbar{display:flex;align-items:center;gap:12px;margin:0 0 12px}
+.schedule-toolbar .status-tabs{width:max-content}
+.game-count{color:#7e8a73;font-size:10px}
+@media(max-width:1250px){.topbar{padding-left:24px;padding-right:24px}.content{padding-left:24px;padding-right:24px}}
+@media(max-width:1000px){.topbar{gap:10px}.content{padding-top:12px}.topbar-nav-button{padding-left:8px;padding-right:8px}.topbar-search{width:200px}}
+@media(max-width:760px){
+ .topbar{min-height:52px;padding:7px 10px;gap:5px}
+ .brand{font-size:0;gap:0}
+ .brand-mark{width:29px;height:29px}
+ .brand-mark svg{width:14px}
+ .primary-nav,.topbar-tools{gap:2px}
+ .topbar-nav-button,.icon-button{width:34px;min-width:34px;height:36px;min-height:36px;padding:0;border-radius:6px}
+ .topbar-nav-button span{display:none}
+ .topbar-nav-button small{top:0;right:0;min-width:13px;padding:0 3px;font-size:8px}
+ .topbar-search{width:auto;min-width:55px;max-width:190px;flex:1;height:36px;padding:0 7px;gap:5px}
+ .topbar-search svg{width:14px;height:14px}
+ .topbar-search input{font-size:12px}
+ .topbar-search input::placeholder{color:#7d8973}
+ .topbar-tools{flex:1;margin-left:auto}
+ .filter-popover{position:fixed;top:56px;right:10px;width:min(350px,calc(100vw - 20px));max-height:calc(100dvh - 68px);overflow:auto}
+ .content{padding:8px 12px 16px}
+ .schedule-toolbar{margin-bottom:9px}
+ .status-tabs{padding:2px}
+ .status-tabs button{min-height:34px;padding:6px 10px;font-size:11px}
+ .game-count{font-size:9px}
+}
+@media(max-width:380px){
+ .topbar{padding-left:7px;padding-right:7px;gap:3px}
+ .primary-nav,.topbar-tools{gap:1px}
+ .topbar-nav-button,.icon-button{width:31px;min-width:31px}
+ .brand-mark{width:27px;height:27px}
+ .topbar-search{min-width:42px;padding:0 5px}
+ .topbar-search input::placeholder{color:transparent}
+ .content{padding-left:10px;padding-right:10px}
+ .status-tabs button{padding-left:7px;padding-right:7px;font-size:10px}
+}
