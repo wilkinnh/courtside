@@ -19,11 +19,16 @@ async function html(url:string){
  })();inflight.set(url,task);try{return await task;}finally{inflight.delete(url);}
 }
 function documents(text:string){const docs:any[]=[];for(const match of text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/gi)){try{docs.push(JSON.parse(match[1]));}catch{}}return docs;}
+function isHhnCard(v:any):boolean{
+ if(/Hurricanes Hockey Network/i.test(v.entitlementCues?.focusMessage?.message||''))return true;
+ // Prime now uses a generic Subscribe cue; its provider logo identifies the channel.
+ try{const u=new URL(v.entitlementCues?.providerLogo?.imageUrl);return u.protocol==='https:'&&u.hostname==='m.media-amazon.com'&&u.pathname.includes('/channel-id/amzn1-dv-channel-17edab23-eb9f-95f2-999a-31e09e70f7d3/');}catch{return false;}
+}
 export function primeCards(text:string):Card[]{
  const cards:Card[]=[];
  const visit=(v:any,depth=0)=>{if(!v||typeof v!=='object'||depth>35)return;
-  if(v.entityType==='EVENT'&&v.widgetType==='TitleCard'&&['LIVE','UPCOMING'].includes(v.liveInfo?.status)&&/Hurricanes Hockey Network|^(?:Watch with a free Prime trial|Watch with Prime|Included with Prime)$/i.test(v.entitlementCues?.focusMessage?.message||'')){
-   try{const u=new URL(v.link?.url,SPORTS_URL);if(u.origin==='https://www.primevideo.com'&&/^\/detail\/[A-Z0-9]{10,32}$/.test(u.pathname)&&!cards.some(c=>c.url===u.origin+u.pathname))cards.push({url:u.origin+u.pathname,title:v.title||'',synopsis:v.synopsis||'',service:/Hurricanes Hockey Network/i.test(v.entitlementCues?.focusMessage?.message||'')?'prime-hhn':'prime'});}catch{}
+  if(v.entityType==='EVENT'&&v.widgetType==='TitleCard'&&['LIVE','UPCOMING'].includes(v.liveInfo?.status)&&(isHhnCard(v)||/^(?:Watch with a free Prime trial|Watch with Prime|Included with Prime)$/i.test(v.entitlementCues?.focusMessage?.message||''))){
+   try{const u=new URL(v.link?.url,SPORTS_URL);if(u.origin==='https://www.primevideo.com'&&/^\/detail\/[A-Z0-9]{10,32}$/.test(u.pathname)&&!cards.some(c=>c.url===u.origin+u.pathname))cards.push({url:u.origin+u.pathname,title:v.title||'',synopsis:v.synopsis||'',service:isHhnCard(v)?'prime-hhn':'prime'});}catch{}
   }
   for(const x of Object.values(v))visit(x,depth+1);
  };for(const d of documents(text))visit(d);return cards;

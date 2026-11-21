@@ -56,3 +56,10 @@ test('HHN discovery works without broadcast metadata and stays separate from bas
  assert.deepEqual(other.links,[]);assert.deepEqual(finished.links,[]);
  assert.equal(await enrichPrime([finished],fetchText),null);assert.equal(calls.length,2);
 });
+
+test('generic Subscribe cue identifies HHN only by its exact provider channel logo',()=>{
+ const logo='https://m.media-amazon.com/images/G/01/digital/video/merch/subs/channel-id/amzn1-dv-channel-17edab23-eb9f-95f2-999a-31e09e70f7d3/logos/channels-logo.png';
+ const subscribed=(imageUrl:string)=>({...card,entitlementCues:{focusMessage:{message:'Subscribe'},providerLogo:{imageUrl}}});
+ assert.equal(primeCards(wrap(subscribed(logo)))[0]?.service,'prime-hhn');
+ for(const invalid of [logo.replace('m.media-amazon.com','example.com'),logo.replace('17edab23','00000000'),''])assert.equal(primeCards(wrap(subscribed(invalid))).length,0);
+});
