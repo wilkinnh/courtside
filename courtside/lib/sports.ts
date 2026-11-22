@@ -85,6 +85,13 @@ export async function api(request:Request):Promise<Response>{
  try{
  if(request.method==='GET'&&p==='health')return send({status:'ok',version:1});
  if(request.method==='GET'&&p==='services')return send({services,leagues});
+ if(request.method==='GET'&&p==='teams'){
+ const league=leagues.find(l=>l.id===url.searchParams.get('league'));if(!league)return send({error:'Unknown league'},400);
+ const document=await jsonFetch(`https://site.api.espn.com/apis/site/v2/sports/${league.path}/teams?limit=1000`);
+ const entries=document?.sports?.[0]?.leagues?.[0]?.teams;if(!Array.isArray(entries))throw new Error('Team directory unavailable');
+ const teams=entries.map((entry:any)=>entry.team).filter((t:any)=>t&&/^\d{1,15}$/.test(String(t.id))&&typeof t.displayName==='string').map((t:any)=>({id:String(t.id),league:league.id,name:t.displayName}));
+ return send({teams:teams.sort((a:any,b:any)=>a.name.localeCompare(b.name))});
+ }
  if(request.method==='GET'&&p==='events'){
  const date=url.searchParams.get('date')||today();if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||isNaN(Date.parse(date+'T00:00:00Z'))||new Date(date+'T00:00:00Z').toISOString().slice(0,10)!==date)return send({error:'date must be YYYY-MM-DD'},400);
  const ids=url.searchParams.has('leagues')?url.searchParams.get('leagues')!.split(','):leagues.map(l=>l.id);if(!ids.length||ids.some(id=>!leagues.some(l=>l.id===id)))return send({error:'Unknown league'},400);

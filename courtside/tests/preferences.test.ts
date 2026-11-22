@@ -26,9 +26,9 @@ test('shared preferences migrate once, merge concurrent edits, and survive a ser
   assert.deepEqual((await (await running.request('POST',migrated)).json() as {preferences:Prefs}).preferences,migrated);
   // A second device's old local state must never replace the household profile.
   assert.deepEqual((await (await running.request('POST',initialPreferences)).json() as {preferences:Prefs}).preferences,migrated);
-  const writes=await Promise.all([running.request('PATCH',{onlyMine:true}),running.request('PATCH',{channels:['NBC']})]);
+  const writes=await Promise.all([running.request('PATCH',{onlyMine:true}),running.request('PATCH',{channels:['NBC']}),running.request('PATCH',{favoriteTeams:[{id:'7',league:'nhl',name:'Carolina Hurricanes'}]})]);
   assert.ok(writes.every(r=>r.status===200));
-  const expected={...migrated,onlyMine:true,channels:['NBC']};
+  const expected={...migrated,onlyMine:true,channels:['NBC'],favoriteTeams:[{id:'7',league:'nhl',name:'Carolina Hurricanes'}]};
   const response=await running.request();assert.equal(response.headers.get('cache-control'),'no-store');
   assert.deepEqual((await response.json() as {preferences:Prefs}).preferences,expected);
   assert.equal((await running.request('PATCH',{hideScores:'true'})).status,400);
@@ -55,5 +55,17 @@ test('first migration wins races and corrupt storage is never silently replaced'
   await assert.rejects(store.read());
   await assert.rejects(store.update(initialPreferences,true));
   assert.equal(await readFile(join(directory,'preferences.json'),'utf8'),'broken');
+ }finally{await rm(directory,{recursive:true,force:true});}
+});
+
+
+test('older server profiles gain favorite teams without losing saved settings',async()=>{
+ const directory=await mkdtemp(join(tmpdir(),'courtside-old-prefs-'));
+ try{
+  const {favoriteTeams,...old}={...initialPreferences,favorites:['123'],services:['prime-hhn']};
+  await writeFile(join(directory,'preferences.json'),JSON.stringify(old));
+  const expected={...old,favoriteTeams:[]};
+  assert.deepEqual(await createPreferenceStore(directory).read(),expected);
+  assert.deepEqual(JSON.parse(await readFile(join(directory,'preferences.json'),'utf8')),expected);
  }finally{await rm(directory,{recursive:true,force:true});}
 });

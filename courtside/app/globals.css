@@ -118,3 +118,7 @@ main{margin-left:0;min-width:0}
  .content{padding-left:10px;padding-right:10px}
  .status-tabs button{padding-left:7px;padding-right:7px;font-size:10px}
 }
+
+.favorite-team-results{max-height:280px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:0 12px}.favorite-team-results .setting-row{padding:12px 0}.favorite-team-list{max-height:240px;overflow-y:auto}.favorite-team-note{padding:4px 17px;color:var(--accent);font-size:11px}
+
+ .day-pager{margin-left:auto;display:flex;align-items:center;flex-shrink:0;border:1px solid var(--border);border-radius:7px;background:var(--panel);padding:2px}.day-pager button{display:flex;align-items:center;justify-content:center;min-height:30px;min-width:30px;padding:4px;border-radius:4px}.day-pager button:disabled{cursor:default;opacity:.3}.day-pager .day-pager-label{min-width:76px;font-size:11px;white-space:nowrap}.schedule-toolbar{flex-wrap:nowrap;overflow-x:auto;padding:4px;margin-left:-4px;margin-right:-4px}.schedule-toolbar .status-tabs{flex-shrink:0}@media(max-width:600px){.schedule-toolbar{gap:6px}.schedule-toolbar .game-count{display:none}.day-pager button{min-width:26px}.day-pager .day-pager-label{min-width:64px}.schedule-toolbar .status-tabs button{padding-left:6px;padding-right:6px;font-size:10px}}

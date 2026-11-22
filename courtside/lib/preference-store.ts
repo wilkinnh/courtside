@@ -9,9 +9,11 @@ export function createPreferenceStore(directory:string){
  async function read():Promise<Prefs|null>{
   let text:string;
   try{text=await readFile(file,'utf8');}catch(error){if((error as NodeJS.ErrnoException).code==='ENOENT')return null;throw error;}
-  const prefs:unknown=JSON.parse(text);
+  const raw:unknown=JSON.parse(text);
+  const missingTeams=!!raw&&typeof raw==='object'&&!Array.isArray(raw)&&!Object.hasOwn(raw,'favoriteTeams');
+  const prefs:unknown=missingTeams?{...raw as object,favoriteTeams:[]}:raw;
   if(!validPreferences(prefs,false,true))throw new Error('Invalid saved preferences');
-  if(prefs&&typeof prefs==='object'&&Object.hasOwn(prefs,'overrides')){
+  if(missingTeams||(prefs&&typeof prefs==='object'&&Object.hasOwn(prefs,'overrides'))){
    const clean={...(prefs as Prefs & {overrides?:unknown})};delete clean.overrides;
    const temporary=join(directory,`.preferences-${randomUUID()}.tmp`);
    try{await writeFile(temporary,JSON.stringify(clean,null,2)+'\n',{mode:0o600});await rename(temporary,file);}

@@ -96,3 +96,15 @@ Do not publish this project to Sites or Cloudflare. `.openai/hosting.json` retai
 ## Send games to a Home Assistant player
 
 Game watch options now include player discovery, provider selection and a Live / From beginning preference. Follow the [setup guide](courtside/public/home-assistant-setup.md) for server-only authentication, Docker networking, and the [playback script](courtside/public/home-assistant-play.yaml). Customize its provider button sequences on your TV before relying on automatic navigation.
+
+## Favorite teams
+
+Open Settings → Favorite teams to search a league and follow teams, including teams not playing today. You can also follow either team from a game's watch options. Their live and upcoming games automatically appear in Starred for the selected schedule date, even when no selected streaming service matches. Hidden sports remain excluded, and individual game stars are independent of team follows.
+
+Favorite teams are stored in the shared server preferences file (`courtside/data/preferences.json`, or the Docker data volume). Other devices sync within about five seconds or when the app regains focus. Existing profiles migrate automatically without losing other preferences. Rebuild the frontend and restart the server after upgrading; Docker users should rebuild the image.
+
+## Upcoming schedule
+
+Use the day pager beside Live/Upcoming to browse today and the next six days. Click the day label to return to today. The same selected date applies to Home and Starred; saved game stars and favorite teams still sync through the server. The selected browsing date is local to each device. Dates follow Eastern Time, while game start times display in your device’s local time.
+
+Future dates show games across all services because broadcast metadata and event links may not be published yet. Today retains the service lineup filter. Switching dates clears the Live now/Upcoming status filter, preserves sport and search filters, and cancels the previous schedule request.
